@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.NoticeEntityMapper">
+    
+    <resultMap type="NoticeEntity" id="NoticeEntityResult">
+        <result property="id"    column="id"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="publishDate"    column="publish_date"    />
+        <result property="publishId"    column="publish_id"    />
+        <result property="reward"    column="reward"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectNoticeEntityVo">
+        select id, img_url, nick_name, publish_date, publish_id, reward, type from tt_notice
+    </sql>
+
+    <select id="selectNoticeEntityList" parameterType="NoticeEntity" resultMap="NoticeEntityResult">
+        select a.*,b.nick_name publishName from tt_notice a left join sys_user b on a.publish_id=b.user_id
+        <where>
+            <if test="nickName != null  and nickName != ''"> and a.nick_name like concat('%', #{nickName}, '%')</if>
+            <if test="publishId != null "> and a.publish_id = #{publishId}</if>
+            <if test="type != null  and type != ''"> and a.type = #{type}</if>
+        </where>
+        order by a.publish_date desc
+    </select>
+    
+    <select id="selectNoticeEntityById" parameterType="Integer" resultMap="NoticeEntityResult">
+        <include refid="selectNoticeEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertNoticeEntity" parameterType="NoticeEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imgUrl != null">img_url,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="publishDate != null">publish_date,</if>
+            <if test="publishId != null">publish_id,</if>
+            <if test="reward != null">reward,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="publishDate != null">#{publishDate},</if>
+            <if test="publishId != null">#{publishId},</if>
+            <if test="reward != null">#{reward},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNoticeEntity" parameterType="NoticeEntity">
+        update tt_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="publishDate != null">publish_date = #{publishDate},</if>
+            <if test="publishId != null">publish_id = #{publishId},</if>
+            <if test="reward != null">reward = #{reward},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNoticeEntityById" parameterType="Integer">
+        delete from tt_notice where id = #{id}
+    </delete>
+
+    <delete id="deleteNoticeEntityByIds" parameterType="String">
+        delete from tt_notice where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="findAllNoticeByType" resultMap="NoticeEntityResult">
+        <include refid="selectNoticeEntityVo"/>
+        <where>
+            and type = #{type}
+        </where>
+    </select>
+
+</mapper>

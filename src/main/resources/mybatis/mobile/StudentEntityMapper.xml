@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.StudentEntityMapper">
+    
+    <resultMap type="StudentEntity" id="StudentEntityResult">
+        <result property="id"    column="id"    />
+        <result property="address"    column="address"    />
+        <result property="age"    column="age"    />
+        <result property="classHours"    column="class_hours"    />
+        <result property="name"    column="name"    />
+        <result property="parentName"    column="parent_name"    />
+        <result property="parentTel"    column="parent_tel"    />
+        <result property="placeId"    column="place_id"    />
+        <result property="registrTime"    column="registr_time"    />
+        <result property="sn"    column="sn"    />
+        <result property="tel"    column="tel"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="money"    column="money"    />
+        <result property="saleName"    column="sale_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+    </resultMap>
+
+    <sql id="selectStudentEntityVo">
+        select id, address, age, class_hours, name, parent_name, parent_tel, place_id, registr_time, sn, tel, id_card, money, sale_name, unit_price from tt_student
+    </sql>
+
+    <select id="selectStudentEntityList" parameterType="StudentEntity" resultMap="StudentEntityResult">
+        <include refid="selectStudentEntityVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="parentTel != null  and parentTel != ''"> and parent_tel = #{parentTel}</if>
+            <if test="placeId != null  and placeId != ''"> and place_id = #{placeId}</if>
+            <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
+            <if test="saleName != null  and saleName != ''"> and sale_name like concat('%', #{saleName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectStudentEntityById" parameterType="Integer" resultMap="StudentEntityResult">
+        <include refid="selectStudentEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStudentEntity" parameterType="StudentEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="address != null">address,</if>
+            <if test="age != null">age,</if>
+            <if test="classHours != null">class_hours,</if>
+            <if test="name != null">name,</if>
+            <if test="parentName != null">parent_name,</if>
+            <if test="parentTel != null">parent_tel,</if>
+            <if test="placeId != null">place_id,</if>
+            <if test="registrTime != null">registr_time,</if>
+            <if test="sn != null">sn,</if>
+            <if test="tel != null">tel,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="money != null">money,</if>
+            <if test="saleName != null">sale_name,</if>
+            <if test="unitPrice != null">unit_price,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="address != null">#{address},</if>
+            <if test="age != null">#{age},</if>
+            <if test="classHours != null">#{classHours},</if>
+            <if test="name != null">#{name},</if>
+            <if test="parentName != null">#{parentName},</if>
+            <if test="parentTel != null">#{parentTel},</if>
+            <if test="placeId != null">#{placeId},</if>
+            <if test="registrTime != null">#{registrTime},</if>
+            <if test="sn != null">#{sn},</if>
+            <if test="tel != null">#{tel},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="money != null">#{money},</if>
+            <if test="saleName != null">#{saleName},</if>
+            <if test="unitPrice != null">#{unitPrice},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStudentEntity" parameterType="StudentEntity">
+        update tt_student
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="address != null">address = #{address},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="classHours != null">class_hours = #{classHours},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="parentName != null">parent_name = #{parentName},</if>
+            <if test="parentTel != null">parent_tel = #{parentTel},</if>
+            <if test="placeId != null">place_id = #{placeId},</if>
+            <if test="registrTime != null">registr_time = #{registrTime},</if>
+            <if test="sn != null">sn = #{sn},</if>
+            <if test="tel != null">tel = #{tel},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="saleName != null">sale_name = #{saleName},</if>
+            <if test="unitPrice != null">unit_price = #{unitPrice},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStudentEntityById" parameterType="Integer">
+        delete from tt_student where id = #{id}
+    </delete>
+
+    <delete id="deleteStudentEntityByIds" parameterType="String">
+        delete from tt_student where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findStudentByPhone" parameterType="String" resultMap="StudentEntityResult">
+        <include refid="selectStudentEntityVo"/>
+        <where>
+            and (parent_tel = #{phoneNm}
+            or tel = #{phoneNm})
+        </where>
+    </select>
+
+    <select id="findStudentByPlace" parameterType="String" resultMap="StudentEntityResult">
+        <include refid="selectStudentEntityVo"/>
+        <where>
+            and place_id=#{placeId}
+        </where>
+    </select>
+
+
+
+    <select id="selectAllStudents" parameterType="StudentEntity" resultType="map">
+        SELECT s.*,p.name place_name FROM tt_student s,tt_place p
+        <where>
+            s.place_id=p.id
+            <if test="name != null  and name != ''"> and s.name like concat('%', #{name}, '%')</if>
+            <if test="parentTel != null  and parentTel != ''"> and s.parent_tel = #{parentTel}</if>
+            <if test="placeId != null  and placeId != ''"> and s.place_id = #{placeId}</if>
+            <if test="tel != null  and tel != ''"> and s.tel = #{tel}</if>
+            <if test="saleName != null  and saleName != ''"> and s.sale_name like concat('%', #{saleName}, '%')</if>
+        </where>
+    </select>
+
+</mapper>

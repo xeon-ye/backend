@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.StorageEntityMapper">
+    
+    <resultMap type="StorageEntity" id="StorageEntityResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="brand"    column="brand"    />
+        <result property="price"    column="price"    />
+        <result property="inventory"    column="inventory"    />
+        <result property="remark"    column="remark"    />
+        <result property="imgUrl"    column="img_url"    />
+    </resultMap>
+
+    <sql id="selectStorageEntityVo">
+        select id, name, brand, price, inventory, remark, img_url from tt_storage
+    </sql>
+
+    <select id="selectStorageEntityList" parameterType="StorageEntity" resultMap="StorageEntityResult">
+        <include refid="selectStorageEntityVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+        </where>
+    </select>
+    
+    <select id="selectStorageEntityById" parameterType="Integer" resultMap="StorageEntityResult">
+        <include refid="selectStorageEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStorageEntity" parameterType="StorageEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_storage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="brand != null">brand,</if>
+            <if test="price != null">price,</if>
+            <if test="inventory != null">inventory,</if>
+            <if test="remark != null">remark,</if>
+            <if test="imgUrl != null">img_url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="price != null">#{price},</if>
+            <if test="inventory != null">#{inventory},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStorageEntity" parameterType="StorageEntity">
+        update tt_storage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="inventory != null">inventory = #{inventory},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStorageEntityById" parameterType="Integer">
+        delete from tt_storage where id = #{id}
+    </delete>
+
+    <delete id="deleteStorageEntityByIds" parameterType="String">
+        delete from tt_storage where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

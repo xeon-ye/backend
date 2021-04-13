@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.CoachEntityMapper">
+    
+    <resultMap type="CoachEntity" id="CoachEntityResult">
+        <result property="id"    column="id"    />
+        <result property="entryDate"    column="entry_date"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="isFullTime"    column="is_full_time"    />
+        <result property="leaveDate"    column="leave_date"    />
+        <result property="name"    column="name"    />
+        <result property="onLeave"    column="on_leave"    />
+        <result property="onWork"    column="on_work"    />
+        <result property="placeId"    column="place_id"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="tel"    column="tel"    />
+    </resultMap>
+
+    <sql id="selectCoachEntityVo">
+        select id, entry_date, id_card, img_url, is_full_time, leave_date, name, on_leave, on_work, place_id, remarks, tel from tt_coach
+    </sql>
+
+    <select id="selectCoachEntityList" parameterType="CoachEntity" resultMap="CoachEntityResult">
+        <include refid="selectCoachEntityVo"/>
+        <where>  
+            <if test="isFullTime != null  and isFullTime != ''"> and is_full_time = #{isFullTime}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="onLeave != null  and onLeave != ''"> and on_leave = #{onLeave}</if>
+            <if test="placeId != null "> and place_id = #{placeId}</if>
+            <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
+        </where>
+    </select>
+    
+    <select id="selectCoachEntityById" parameterType="Integer" resultMap="CoachEntityResult">
+        <include refid="selectCoachEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCoachEntity" parameterType="CoachEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_coach
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="entryDate != null">entry_date,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="isFullTime != null">is_full_time,</if>
+            <if test="leaveDate != null">leave_date,</if>
+            <if test="name != null">name,</if>
+            <if test="onLeave != null">on_leave,</if>
+            <if test="onWork != null">on_work,</if>
+            <if test="placeId != null">place_id,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="tel != null">tel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="entryDate != null">#{entryDate},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="isFullTime != null">#{isFullTime},</if>
+            <if test="leaveDate != null">#{leaveDate},</if>
+            <if test="name != null">#{name},</if>
+            <if test="onLeave != null">#{onLeave},</if>
+            <if test="onWork != null">#{onWork},</if>
+            <if test="placeId != null">#{placeId},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="tel != null">#{tel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCoachEntity" parameterType="CoachEntity">
+        update tt_coach
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="entryDate != null">entry_date = #{entryDate},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="isFullTime != null">is_full_time = #{isFullTime},</if>
+            <if test="leaveDate != null">leave_date = #{leaveDate},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="onLeave != null">on_leave = #{onLeave},</if>
+            <if test="onWork != null">on_work = #{onWork},</if>
+            <if test="placeId != null">place_id = #{placeId},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="tel != null">tel = #{tel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCoachEntityById" parameterType="Integer">
+        delete from tt_coach where id = #{id}
+    </delete>
+
+    <delete id="deleteCoachEntityByIds" parameterType="String">
+        delete from tt_coach where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findCoachEntityByOnWork" parameterType="Integer" resultType="java.util.HashMap">
+        <include refid="selectCoachEntityVo"/>
+        where on_work = #{onWork}
+    </select>
+
+    <select id="findCoachByPhone" parameterType="String" resultMap="CoachEntityResult">
+        <include refid="selectCoachEntityVo"/>
+        where tel = #{phone}
+    </select>
+
+
+
+
+</mapper>

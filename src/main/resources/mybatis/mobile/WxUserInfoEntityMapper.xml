@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.WxUserInfoEntityMapper">
+    
+    <resultMap type="WxUserInfoEntity" id="WxUserInfoEntityResult">
+        <result property="id"    column="id"    />
+        <result property="avatarUrl"    column="avatar_url"    />
+        <result property="city"    column="city"    />
+        <result property="country"    column="country"    />
+        <result property="countryCode"    column="country_code"    />
+        <result property="gender"    column="gender"    />
+        <result property="language"    column="language"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="openCode"    column="open_code"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="province"    column="province"    />
+        <result property="purePhoneNumber"    column="pure_phone_number"    />
+        <result property="updateDateTime"    column="update_date_time"    />
+    </resultMap>
+
+    <sql id="selectWxUserInfoEntityVo">
+        select id, avatar_url, city, country, country_code, gender, language, nick_name, open_code, phone_number, province, pure_phone_number, update_date_time from tt_wx_user_info
+    </sql>
+
+    <select id="selectWxUserInfoEntityList" parameterType="WxUserInfoEntity" resultMap="WxUserInfoEntityResult">
+        <include refid="selectWxUserInfoEntityVo"/>
+        <where>  
+            <if test="purePhoneNumber != null  and purePhoneNumber != ''"> and pure_phone_number = #{purePhoneNumber}</if>
+        </where>
+    </select>
+    
+    <select id="selectWxUserInfoEntityById" parameterType="Integer" resultMap="WxUserInfoEntityResult">
+        <include refid="selectWxUserInfoEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWxUserInfoEntity" parameterType="WxUserInfoEntity">
+        insert into tt_wx_user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="avatarUrl != null">avatar_url,</if>
+            <if test="city != null">city,</if>
+            <if test="country != null">country,</if>
+            <if test="countryCode != null">country_code,</if>
+            <if test="gender != null">gender,</if>
+            <if test="language != null">language,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="openCode != null">open_code,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="province != null">province,</if>
+            <if test="purePhoneNumber != null">pure_phone_number,</if>
+            <if test="updateDateTime != null">update_date_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="avatarUrl != null">#{avatarUrl},</if>
+            <if test="city != null">#{city},</if>
+            <if test="country != null">#{country},</if>
+            <if test="countryCode != null">#{countryCode},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="language != null">#{language},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="openCode != null">#{openCode},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="province != null">#{province},</if>
+            <if test="purePhoneNumber != null">#{purePhoneNumber},</if>
+            <if test="updateDateTime != null">#{updateDateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWxUserInfoEntity" parameterType="WxUserInfoEntity">
+        update tt_wx_user_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="countryCode != null">country_code = #{countryCode},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="language != null">language = #{language},</if>
+            <if test="nickName != null">nick_name = #{nickName},</if>
+            <if test="openCode != null">open_code = #{openCode},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="purePhoneNumber != null">pure_phone_number = #{purePhoneNumber},</if>
+            <if test="updateDateTime != null">update_date_time = #{updateDateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWxUserInfoEntityById" parameterType="Integer">
+        delete from tt_wx_user_info where id = #{id}
+    </delete>
+
+    <delete id="deleteWxUserInfoEntityByIds" parameterType="String">
+        delete from tt_wx_user_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findWxUserInfoEntityByOpenCode" parameterType="String" resultMap="WxUserInfoEntityResult">
+        <include refid="selectWxUserInfoEntityVo"/>
+        <where>
+            and open_code = #{openId}
+        </where>
+    </select>
+
+</mapper>

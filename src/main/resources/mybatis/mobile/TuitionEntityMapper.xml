@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.TuitionEntityMapper">
+    
+    <resultMap type="TuitionEntity" id="TuitionEntityResult">
+        <result property="id"    column="id"    />
+        <result property="billingType"    column="billing_type"    />
+        <result property="chargeType"    column="charge_type"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="description"    column="description"    />
+        <result property="invoice"    column="invoice"    />
+        <result property="payMoney"    column="pay_money"    />
+        <result property="payTime"    column="pay_time"    />
+        <result property="placeId"    column="place_id"    />
+        <result property="studentId"    column="student_id"    />
+    </resultMap>
+
+    <sql id="selectTuitionEntityVo">
+        select id, billing_type, charge_type, course_id, description, invoice, pay_money, pay_time, place_id, student_id from tt_tuition
+    </sql>
+
+    <select id="selectTuitionEntityList" parameterType="TuitionEntity" resultMap="TuitionEntityResult">
+        <include refid="selectTuitionEntityVo"/>
+        <where>  
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="placeId != null "> and place_id = #{placeId}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+        </where>
+    </select>
+
+    <select id="selectAllTuitionList" parameterType="TuitionEntity" resultMap="TuitionEntityResult">
+        select a.*,b.name studentName,c.name placeName from tt_tuition a LEFT JOIN tt_student b on a.student_id=b.id
+        left JOIN tt_place c on a.place_id = c.id
+        <where>
+            <if test="placeId != null "> and a.place_id = #{placeId}</if>
+            <if test="studentId != null "> and a.student_id = #{studentId}</if>
+        </where>
+        order by a.id desc
+    </select>
+
+
+
+    <select id="selectTuitionEntityById" parameterType="Integer" resultMap="TuitionEntityResult">
+        <include refid="selectTuitionEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTuitionEntity" parameterType="TuitionEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_tuition
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="billingType != null">billing_type,</if>
+            <if test="chargeType != null">charge_type,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="description != null">description,</if>
+            <if test="invoice != null">invoice,</if>
+            <if test="payMoney != null">pay_money,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="placeId != null">place_id,</if>
+            <if test="studentId != null">student_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="billingType != null">#{billingType},</if>
+            <if test="chargeType != null">#{chargeType},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="description != null">#{description},</if>
+            <if test="invoice != null">#{invoice},</if>
+            <if test="payMoney != null">#{payMoney},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="placeId != null">#{placeId},</if>
+            <if test="studentId != null">#{studentId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTuitionEntity" parameterType="TuitionEntity">
+        update tt_tuition
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="billingType != null">billing_type = #{billingType},</if>
+            <if test="chargeType != null">charge_type = #{chargeType},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="invoice != null">invoice = #{invoice},</if>
+            <if test="payMoney != null">pay_money = #{payMoney},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="placeId != null">place_id = #{placeId},</if>
+            <if test="studentId != null">student_id = #{studentId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTuitionEntityById" parameterType="Integer">
+        delete from tt_tuition where id = #{id}
+    </delete>
+
+    <delete id="deleteTuitionEntityByIds" parameterType="String">
+        delete from tt_tuition where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

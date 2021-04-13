@@ -1,52 +1,43 @@
-# Prerequisites
-*.d
+######################################################################
+# Build Tools
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
 
-# Linker output
-*.ilk
-*.map
-*.exp
+target/
+!.mvn/wrapper/maven-wrapper.jar
 
-# Precompiled Headers
-*.gch
-*.pch
+######################################################################
+# IDE
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+### NetBeans ###
+nbproject/private/
+build/*
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
 
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
+######################################################################
+# Others
+*.log
+*.xml.versionsBackup
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+!*/build/*.java
+!*/build/*.html
+!*/build/*.xml

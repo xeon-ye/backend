@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.CourseEntityMapper">
+    
+    <resultMap type="CourseEntity" id="CourseEntityResult">
+        <result property="id"    column="id"    />
+        <result property="classHours"    column="class_hours"    />
+        <result property="money"    column="money"    />
+        <result property="name"    column="name"    />
+        <result property="placeId"    column="place_id"    />
+    </resultMap>
+
+    <sql id="selectCourseEntityVo">
+        select id, class_hours, money, name, place_id from tt_course
+    </sql>
+
+    <select id="selectCourseEntityList" parameterType="CourseEntity" resultMap="CourseEntityResult">
+        <include refid="selectCourseEntityVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="placeId != null "> and place_id = #{placeId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCourseEntityById" parameterType="Integer" resultMap="CourseEntityResult">
+        <include refid="selectCourseEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCourseEntity" parameterType="CourseEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="classHours != null">class_hours,</if>
+            <if test="money != null">money,</if>
+            <if test="name != null">name,</if>
+            <if test="placeId != null">place_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="classHours != null">#{classHours},</if>
+            <if test="money != null">#{money},</if>
+            <if test="name != null">#{name},</if>
+            <if test="placeId != null">#{placeId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCourseEntity" parameterType="CourseEntity">
+        update tt_course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="classHours != null">class_hours = #{classHours},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="placeId != null">place_id = #{placeId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCourseEntityById" parameterType="Integer">
+        delete from tt_course where id = #{id}
+    </delete>
+
+    <delete id="deleteCourseEntityByIds" parameterType="String">
+        delete from tt_course where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.PlaceEntityMapper">
+    
+    <resultMap type="PlaceEntity" id="PlaceEntityResult">
+        <result property="id"    column="id"    />
+        <result property="address"    column="address"    />
+        <result property="commission"    column="commission"    />
+        <result property="contacts"    column="contacts"    />
+        <result property="contactsTel"    column="contacts_tel"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="name"    column="name"    />
+        <result property="rent"    column="rent"    />
+        <result property="rentType"    column="rent_type"    />
+        <result property="signTime"    column="sign_time"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectPlaceEntityVo">
+        select id, address, commission, contacts, contacts_tel, end_time, name, rent, rent_type, sign_time, start_time, type from tt_place
+    </sql>
+
+    <select id="selectPlaceEntityList" parameterType="PlaceEntity" resultMap="PlaceEntityResult">
+        <include refid="selectPlaceEntityVo"/>
+        <where>  
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="contacts != null  and contacts != ''"> and contacts = #{contacts}</if>
+            <if test="contactsTel != null  and contactsTel != ''"> and contacts_tel = #{contactsTel}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null "> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectPlaceEntityById" parameterType="Integer" resultMap="PlaceEntityResult">
+        <include refid="selectPlaceEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPlaceEntity" parameterType="PlaceEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_place
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="address != null">address,</if>
+            <if test="commission != null">commission,</if>
+            <if test="contacts != null">contacts,</if>
+            <if test="contactsTel != null">contacts_tel,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="name != null">name,</if>
+            <if test="rent != null">rent,</if>
+            <if test="rentType != null">rent_type,</if>
+            <if test="signTime != null">sign_time,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="address != null">#{address},</if>
+            <if test="commission != null">#{commission},</if>
+            <if test="contacts != null">#{contacts},</if>
+            <if test="contactsTel != null">#{contactsTel},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="name != null">#{name},</if>
+            <if test="rent != null">#{rent},</if>
+            <if test="rentType != null">#{rentType},</if>
+            <if test="signTime != null">#{signTime},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlaceEntity" parameterType="PlaceEntity">
+        update tt_place
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="address != null">address = #{address},</if>
+            <if test="commission != null">commission = #{commission},</if>
+            <if test="contacts != null">contacts = #{contacts},</if>
+            <if test="contactsTel != null">contacts_tel = #{contactsTel},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="rent != null">rent = #{rent},</if>
+            <if test="rentType != null">rent_type = #{rentType},</if>
+            <if test="signTime != null">sign_time = #{signTime},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePlaceEntityById" parameterType="Integer">
+        delete from tt_place where id = #{id}
+    </delete>
+
+    <delete id="deletePlaceEntityByIds" parameterType="String">
+        delete from tt_place where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findAllPlace" resultType="PlaceEntity">
+        <include refid="selectPlaceEntityVo"/>
+    </select>
+</mapper>

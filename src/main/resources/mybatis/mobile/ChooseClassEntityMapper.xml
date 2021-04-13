@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.ChooseClassEntityMapper">
+    
+    <resultMap type="ChooseClassEntity" id="ChooseClassEntityResult">
+        <result property="id"    column="id"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="placeId"    column="place_id"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="week"    column="week"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="coachId"    column="coach_id"    />
+    </resultMap>
+
+    <sql id="selectChooseClassEntityVo">
+        select id, end_time, place_id, start_time, week, course_id, coach_id from tt_choose_class
+    </sql>
+
+    <select id="selectChooseClassEntityList" parameterType="ChooseClassEntity" resultMap="ChooseClassEntityResult">
+        <include refid="selectChooseClassEntityVo"/>
+        <where>  
+            <if test="placeId != null  and placeId != ''"> and place_id = #{placeId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="coachId != null "> and coach_id = #{coachId}</if>
+        </where>
+    </select>
+    
+    <select id="selectChooseClassEntityById" parameterType="Integer" resultMap="ChooseClassEntityResult">
+        <include refid="selectChooseClassEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChooseClassEntity" parameterType="ChooseClassEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_choose_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="endTime != null">end_time,</if>
+            <if test="placeId != null">place_id,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="week != null">week,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="coachId != null">coach_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="endTime != null">#{endTime},</if>
+            <if test="placeId != null">#{placeId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="week != null">#{week},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="coachId != null">#{coachId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChooseClassEntity" parameterType="ChooseClassEntity">
+        update tt_choose_class
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="placeId != null">place_id = #{placeId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="week != null">week = #{week},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="coachId != null">coach_id = #{coachId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChooseClassEntityById" parameterType="Integer">
+        delete from tt_choose_class where id = #{id}
+    </delete>
+
+    <delete id="deleteChooseClassEntityByIds" parameterType="String">
+        delete from tt_choose_class where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findChooseClassEntitiesByCoachId" resultMap="ChooseClassEntityResult">
+        <include refid="selectChooseClassEntityVo"/>
+        <where>
+            and coach_id = #{coachId}
+            and week = #{week}
+        </where>
+    </select>
+
+</mapper>
