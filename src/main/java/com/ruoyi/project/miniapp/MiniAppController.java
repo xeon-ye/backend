@@ -48,6 +48,8 @@ public class MiniAppController extends BaseController {
     private CourseService courseService;
     @Autowired
     private TuitionService tuitionService;
+    @Autowired
+    private ISignUpEntityService signUpEntityService;
 
 
     /**
@@ -324,6 +326,19 @@ public class MiniAppController extends BaseController {
             return 0;
         }
 
+    }
+
+    /**
+     * 学员报名
+     * @param signUpEntity
+     * @return
+     */
+    @PostMapping("/addSignUp")
+    public int addSignUp(@RequestBody SignUpEntity signUpEntity){
+        Date date = DateUtil.date();
+        String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+        signUpEntity.setSignTime(format);
+        return this.signUpEntityService.insertSignUpEntity(signUpEntity);
     }
 
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.SignUpEntityMapper">
+    
+    <resultMap type="SignUpEntity" id="SignUpEntityResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="age"    column="age"    />
+        <result property="sex"    column="sex"    />
+        <result property="school"    column="school"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="signTime"    column="sign_time"    />
+    </resultMap>
+
+    <sql id="selectSignUpEntityVo">
+        select id, name, phone, age, sex, school, remarks,signTime from tt_sign_up
+    </sql>
+
+    <select id="selectSignUpEntityList" parameterType="SignUpEntity" resultMap="SignUpEntityResult">
+        <include refid="selectSignUpEntityVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="age != null  and age != ''"> and age = #{age}</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="school != null  and school != ''"> and school = #{school}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="signTime != null  and signTime != ''"> and sign_time = #{signTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSignUpEntityById" parameterType="Long" resultMap="SignUpEntityResult">
+        <include refid="selectSignUpEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSignUpEntity" parameterType="SignUpEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_sign_up
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="age != null">age,</if>
+            <if test="sex != null">sex,</if>
+            <if test="school != null">school,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="signTime != null">sign_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="age != null">#{age},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="school != null">#{school},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="signTime != null">#{signTime}</if>
+         </trim>
+    </insert>
+
+    <update id="updateSignUpEntity" parameterType="SignUpEntity">
+        update tt_sign_up
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="school != null">school = #{school},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="signTime != null">sign_time = #{signTime}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSignUpEntityById" parameterType="Long">
+        delete from tt_sign_up where id = #{id}
+    </delete>
+
+    <delete id="deleteSignUpEntityByIds" parameterType="String">
+        delete from tt_sign_up where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
