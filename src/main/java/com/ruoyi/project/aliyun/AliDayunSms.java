@@ -19,8 +19,8 @@ public class AliDayunSms {
     // 产品域名,开发者无需替换
     static final String domain = "dysmsapi.aliyuncs.com";
     // TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-    static final String AccessKeyId = "LTAI5t6LppfGx1kigsCB47kQ";
-    static final String AccessKeySecret = "xv4n2z47jweJBT0OfSFCfeSAv8D1Wc";
+    static final String AccessKeyId = "*****";
+    static final String AccessKeySecret = "*****";
 
     /**
      * 发短信工具类
