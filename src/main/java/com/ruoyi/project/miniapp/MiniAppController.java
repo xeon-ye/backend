@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,10 @@ public class MiniAppController extends BaseController {
     private TuitionService tuitionService;
     @Autowired
     private ISignUpEntityService signUpEntityService;
+    @Autowired
+    private StorageService storageService;
+    @Autowired
+    private IPurchaseDetailEntityService purchaseDetailEntityService;
 
 
     /**
@@ -339,6 +344,48 @@ public class MiniAppController extends BaseController {
         String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
         signUpEntity.setSignTime(format);
         return this.signUpEntityService.insertSignUpEntity(signUpEntity);
+    }
+
+    /**
+     * 查询所有商品
+     * @param storageEntity
+     * @return
+     */
+    @PostMapping("/findAllStorages")
+    public List<StorageEntity> findAllStorages(@RequestBody StorageEntity storageEntity){
+        return this.storageService.selectStorageEntityList(storageEntity);
+    }
+
+    /**
+     * 商品出库
+     * @param id
+     * @param count
+     * @return
+     */
+    @PostMapping("/outStorage/{id}/{count}/{tel}")
+    public AjaxResult outStorage(@PathVariable Integer id,@PathVariable String count,@PathVariable String tel){
+        BigDecimal count2 = new BigDecimal(count);
+        Date date = DateUtil.date();
+        String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+        try {
+            StorageEntity storageEntity = this.storageService.selectStorageEntityById(id);
+            if(storageEntity.getInventory()>=Integer.parseInt(count)){
+                storageEntity.setInventory(storageEntity.getInventory()-Integer.parseInt(count));
+                storageService.updateStorageEntity(storageEntity);
+                PurchaseDetailEntity purchaseDetailEntity = new PurchaseDetailEntity();
+                purchaseDetailEntity.setBuyCount(count);
+                purchaseDetailEntity.setBuyMoney(String.valueOf(storageEntity.getPrice().multiply(count2)));
+                purchaseDetailEntity.setBuyTel(tel);
+                purchaseDetailEntity.setBuyTime(format);
+                purchaseDetailEntity.setStorageId(Long.valueOf(id));
+                purchaseDetailEntityService.insertPurchaseDetailEntity(purchaseDetailEntity);
+                return toAjax(1);
+            }else{
+                return AjaxResult.error("库存不足！");
+            }
+        }catch (Exception e){
+            return toAjax(0);
+        }
     }
 
 
