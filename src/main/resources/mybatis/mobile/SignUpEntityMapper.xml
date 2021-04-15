@@ -16,7 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSignUpEntityVo">
-        select id, name, phone, age, sex, school, remarks,signTime from tt_sign_up
+        select id, name, phone, age, sex, school, remarks,sign_time from tt_sign_up
     </sql>
 
     <select id="selectSignUpEntityList" parameterType="SignUpEntity" resultMap="SignUpEntityResult">
