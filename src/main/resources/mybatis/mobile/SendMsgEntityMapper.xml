@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sendTime != null  and sendTime != ''"> and send_time = #{sendTime}</if>
             <if test="sendMobile != null  and sendMobile != ''"> and send_mobile = #{sendMobile}</if>
         </where>
+        order by send_time desc
     </select>
     
     <select id="selectSendMsgEntityById" parameterType="Integer" resultMap="SendMsgEntityResult">
