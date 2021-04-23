@@ -215,6 +215,26 @@ public class MiniAppController extends BaseController {
     }
 
     /**
+     * 查询消息列表
+     * @return
+     */
+    @PostMapping("/findXiaoxiListByTypeAndTel/{type}/{tel}")
+    public List<NoticeEntity> findXiaoxiListByTypeAndTel(@PathVariable Integer type,@PathVariable String tel){
+        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(tel);
+        List<NoticeEntity> newnoticeEntityList = new ArrayList<>();
+        if(studentEntityList.size()>0){
+            for (StudentEntity stu : studentEntityList) {
+                NoticeEntity noticeEntity = new NoticeEntity();
+                noticeEntity.setType(String.valueOf(type));
+                noticeEntity.setReceiveId(stu.getId());
+                List<NoticeEntity> noticeEntityList = this.noticeService.selectNoticeEntityList(noticeEntity);
+                newnoticeEntityList.addAll(noticeEntityList);
+            }
+        }
+        return newnoticeEntityList;
+    }
+
+    /**
      * 查询学员列表
      */
     @PostMapping("/findStudentsList/{phone}/{placeId}")

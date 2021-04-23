@@ -12,18 +12,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="publishId"    column="publish_id"    />
         <result property="reward"    column="reward"    />
         <result property="type"    column="type"    />
+        <result property="receiveId"    column="receive_id"    />
     </resultMap>
 
     <sql id="selectNoticeEntityVo">
-        select id, img_url, nick_name, publish_date, publish_id, reward, type from tt_notice
+        select id, img_url, nick_name, publish_date, publish_id, reward, type,receive_id from tt_notice
     </sql>
 
     <select id="selectNoticeEntityList" parameterType="NoticeEntity" resultMap="NoticeEntityResult">
-        select a.*,b.nick_name publishName from tt_notice a left join sys_user b on a.publish_id=b.user_id
+        select a.*,b.nick_name publishName,c.name receiveName from tt_notice a left join sys_user b on a.publish_id=b.user_id left join tt_student c on a.receive_id=c.id
         <where>
             <if test="nickName != null  and nickName != ''"> and a.nick_name like concat('%', #{nickName}, '%')</if>
             <if test="publishId != null "> and a.publish_id = #{publishId}</if>
             <if test="type != null  and type != ''"> and a.type = #{type}</if>
+            <if test="receiveId != null  and receiveId != ''"> and a.receive_id = #{receiveId}</if>
         </where>
         order by a.publish_date desc
     </select>
@@ -42,6 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="publishId != null">publish_id,</if>
             <if test="reward != null">reward,</if>
             <if test="type != null">type,</if>
+            <if test="receiveId != null">receive_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="imgUrl != null">#{imgUrl},</if>
@@ -50,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="publishId != null">#{publishId},</if>
             <if test="reward != null">#{reward},</if>
             <if test="type != null">#{type},</if>
+            <if test="receiveId != null">#{receiveId},</if>
          </trim>
     </insert>
 
@@ -62,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="publishId != null">publish_id = #{publishId},</if>
             <if test="reward != null">reward = #{reward},</if>
             <if test="type != null">type = #{type},</if>
+            <if test="receiveId != null">receive_id = #{receiveId},</if>
         </trim>
         where id = #{id}
     </update>

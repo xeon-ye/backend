@@ -42,6 +42,8 @@ public class NoticeEntity extends BaseEntity
     /** 类型 */
     @Excel(name = "类型")
     private String type;
+    private Integer receiveId;
+    private String receiveName;
 
     public void setId(Integer id) 
     {
@@ -113,6 +115,22 @@ public class NoticeEntity extends BaseEntity
 
     public void setPublishName(String publishName) {
         this.publishName = publishName;
+    }
+
+    public Integer getReceiveId() {
+        return receiveId;
+    }
+
+    public void setReceiveId(Integer receiveId) {
+        this.receiveId = receiveId;
+    }
+
+    public String getReceiveName() {
+        return receiveName;
+    }
+
+    public void setReceiveName(String receiveName) {
+        this.receiveName = receiveName;
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.ruoyi.project.mobile.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import cn.hutool.core.date.DateUtil;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +80,11 @@ public class NoticeEntityController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody NoticeEntity noticeEntity)
     {
+        Long name = SecurityUtils.getLoginUser().getUser().getUserId();
+        Date date = DateUtil.date();
+        String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+        noticeEntity.setPublishDate(format);
+        noticeEntity.setPublishId(Integer.parseInt(String.valueOf(name)));
         return toAjax(noticeEntityService.insertNoticeEntity(noticeEntity));
     }
 
@@ -87,6 +96,11 @@ public class NoticeEntityController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody NoticeEntity noticeEntity)
     {
+        Long name = SecurityUtils.getLoginUser().getUser().getUserId();
+        Date date = DateUtil.date();
+        String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+        noticeEntity.setPublishDate(format);
+        noticeEntity.setPublishId(Integer.parseInt(String.valueOf(name)));
         return toAjax(noticeEntityService.updateNoticeEntity(noticeEntity));
     }
 
