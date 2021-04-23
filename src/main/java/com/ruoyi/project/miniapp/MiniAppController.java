@@ -2,15 +2,31 @@ package com.ruoyi.project.miniapp;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.unit.DataUnit;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.sign.Base64;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.project.miniapp.weixinpay.vo.Json;
 import com.ruoyi.project.mobile.domain.*;
 import com.ruoyi.project.mobile.service.*;
+import com.ruoyi.project.system.domain.SysDictData;
+import com.ruoyi.project.system.service.ISysDictDataService;
+import com.ruoyi.project.system.service.ISysDictTypeService;
+import com.ruoyi.project.tegxunyun.SendShorMsg;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
+import com.tencentcloudapi.sms.v20190711.SmsClient;
+import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
+import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.weixin4j.WeixinException;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -18,9 +34,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.security.AlgorithmParameters;
+import java.security.Security;
+import java.util.*;
 
 /**
  * 小程序 Controller
@@ -55,6 +71,12 @@ public class MiniAppController extends BaseController {
     private StorageService storageService;
     @Autowired
     private IPurchaseDetailEntityService purchaseDetailEntityService;
+    @Autowired
+    private ISysDictDataService dictDataService;
+    @Autowired
+    private ISysDictTypeService dictTypeService;
+    @Autowired
+    private ISendMsgEntityService sendMsgEntityService;
 
 
     /**
@@ -118,13 +140,24 @@ public class MiniAppController extends BaseController {
     }
 
     /**
+     * 获取授权用户手机号
+     * @return
+     */
+    @RequestMapping("/getUserPhoneNumber")
+    @ResponseBody
+    public Object getUserPhoneNumber(String encryptedData, String sessionkey, String iv,String openid) {
+       return this.weiXinPayService.getUserPhoneNumber(encryptedData,sessionkey,iv,openid);
+    }
+
+
+    /**
      * 保存用户信息
      */
     @RequestMapping("/saveUserInfo")
     @ResponseBody
-    public void saveUserInfo(String openId, String userInfo) {
+    public int saveUserInfo(String openId, String userInfo) {
 
-        this.wxUserInfoService.saveUserInfoAndPhoneAndOpenId(openId, userInfo);
+        return this.wxUserInfoService.saveUserInfoAndPhoneAndOpenId(openId, userInfo);
     }
 
     /**
@@ -152,9 +185,13 @@ public class MiniAppController extends BaseController {
      */
     @PostMapping("/findExistCoach/{phone}")
     public CoachEntity findExistCoach(@PathVariable String phone){
+        CoachEntity coachEntity = new CoachEntity();
         //手机号查询教练
         List<CoachEntity> coachEntitys = this.coachService.findCoachByPhone(phone);
-        return coachEntitys.get(0);
+        if(coachEntitys.size()>0){
+            coachEntity =  coachEntitys.get(0);
+        }
+        return coachEntity;
     }
 
     /**
@@ -165,6 +202,16 @@ public class MiniAppController extends BaseController {
     @RequestMapping(value="/findGongGaoNotice/{type}")
     public List<NoticeEntity> findGongGaoNotice(@PathVariable Integer type){
         return this.noticeService.findAllNoticeByType(type);
+    }
+
+    /**
+     * 查询公告明细
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/findNoticeDetail/{noticeId}")
+    public NoticeEntity findNoticeDetail(@PathVariable Integer noticeId){
+        return this.noticeService.selectNoticeEntityById(noticeId);
     }
 
     /**
@@ -184,7 +231,7 @@ public class MiniAppController extends BaseController {
     }
 
     /**
-     * 查询上课记录
+     * 查询上课记录(根据学生id)
      */
     @PostMapping("/findClassRecord/{studentId}")
     public List<StudentSignEntity> findClassRecord(@PathVariable Integer studentId){
@@ -192,6 +239,42 @@ public class MiniAppController extends BaseController {
         studentSignEntity.setStudentId(studentId);
         List<StudentSignEntity> list = this.studentSignService.selectStudentSignNew(studentSignEntity);
         return list;
+    }
+
+    /**
+     * 查询上课记录(根据手机号)
+     */
+    @PostMapping("/findClassRecordByPhone/{phone}")
+    public List<StudentSignEntity> findClassRecordByPhone(@PathVariable String phone){
+        List<StudentSignEntity> listAll = new ArrayList<>();
+        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
+        for (StudentEntity studentEntity:studentEntityList) {
+            StudentSignEntity studentSignEntity = new StudentSignEntity();
+            int studentId = studentEntity.getId();
+            studentSignEntity.setStudentId(studentId);
+            List<StudentSignEntity> list = this.studentSignService.selectStudentSignNew(studentSignEntity);
+            listAll.addAll(list);
+        }
+
+        return listAll;
+    }
+
+    /**
+     * 查询缴费记录(根据手机号)
+     */
+    @PostMapping("/findTuiDetailsByPhone/{phone}")
+    public List<TuitionEntity> findTuiDetailsByPhone(@PathVariable String phone){
+        List<TuitionEntity> listAll = new ArrayList<>();
+        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
+        for (StudentEntity studentEntity:studentEntityList) {
+            TuitionEntity tuitionEntity = new TuitionEntity();
+            int studentId = studentEntity.getId();
+            tuitionEntity.setStudentId(studentId);
+            List<TuitionEntity> list = this.tuitionService.selectTuitionEntityList(tuitionEntity);
+            listAll.addAll(list);
+        }
+
+        return listAll;
     }
 
     /**
@@ -242,11 +325,14 @@ public class MiniAppController extends BaseController {
             }
 
             this.studentService.updateStudentEntity(studentEntity);
+            this.studentSignService.insertStudentSignEntity(studentSignEntity);
+            //发送短信
+            sendYuEMsg(studentSignEntity);
         }catch (Exception e){
             e.printStackTrace();
             return AjaxResult.error("签到失败");
         }
-        return toAjax(this.studentSignService.insertStudentSignEntity(studentSignEntity));
+        return toAjax(1);
     }
 
     /**
@@ -285,8 +371,8 @@ public class MiniAppController extends BaseController {
      * @param
      * @return
      */
-    @PostMapping("/addTuition/{studentId}/{money}")
-    public int addTuition(@PathVariable String studentId,@PathVariable String money){
+    @PostMapping("/addTuition/{studentId}/{money}/{orderNo}")
+    public int addTuition(@PathVariable String studentId,@PathVariable String money,@PathVariable String orderNo){
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd");
         String desc = "";
@@ -298,7 +384,7 @@ public class MiniAppController extends BaseController {
                 studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(money)));
                 desc = "冲"+money+",不送,单节课"+studentEntity.getUnitPrice()+"元";
             }else{
-                if(money.equals("0.01")){
+                if(money.equals("1000")){
                     newMoney="1100";
                     desc = "冲1000送100";
                 }else if(money.equals("3000")){
@@ -313,6 +399,9 @@ public class MiniAppController extends BaseController {
                 }else if(money.equals("9000")){
                     newMoney="13000";
                     desc = "冲9000送4000";
+                }else{
+                    newMoney = money;
+                    desc = "自定义金额，冲"+money+"元,不送";
                 }
                 studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(newMoney)));
             }
@@ -324,14 +413,74 @@ public class MiniAppController extends BaseController {
             tuitionEntity.setStudentId(Integer.parseInt(studentId));
             tuitionEntity.setPayTime(format);
             tuitionEntity.setDescription(desc);
+            tuitionEntity.setOrderno(Integer.parseInt(orderNo));
             this.tuitionService.insertTuitionEntity(tuitionEntity);
             return 1;
         }catch (Exception e){
             e.printStackTrace();
             return 0;
         }
-
     }
+
+    /**
+     * 新增缴费记录(根据手机号)
+     * @param
+     * @return
+     */
+    @PostMapping("/addTuitionByPhone/{mobilePhone}/{money}/{orderNo}")
+    public int addTuitionByPhone(@PathVariable String mobilePhone,@PathVariable String money,@PathVariable String orderNo){
+        Date date = DateUtil.date();
+        String format = DateUtil.format(date, "yyyy-MM-dd");
+        String desc = "";
+        String newMoney = "";
+
+        try {
+            StudentEntity studentEntity = this.studentService.findStudentByPhone(mobilePhone).get(0);
+            int yuanmoney = queryBalanceByPhone(studentEntity.getParentTel());
+            if(studentEntity.getUnitPrice()!=null && !studentEntity.getUnitPrice().equals("")){
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(money)));
+                desc = "冲"+money+",不送,单节课"+studentEntity.getUnitPrice()+"元";
+            }else{
+                if(money.equals("1000")){
+                    newMoney="1100";
+                    desc = "冲1000送100";
+                }else if(money.equals("3000")){
+                    newMoney="3500";
+                    desc = "冲3000送500";
+                }else if(money.equals("5000")){
+                    newMoney="6000";
+                    desc = "冲5000送1000";
+                }else if(money.equals("7000")){
+                    newMoney="9500";
+                    desc = "冲7000送2500";
+                }else if(money.equals("9000")){
+                    newMoney="13000";
+                    desc = "冲9000送4000";
+                }else{
+                    newMoney = money;
+                    desc = "自定义金额，冲"+money+"元,不送";
+                }
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(newMoney)));
+            }
+
+            this.studentService.updateStudentEntity(studentEntity);
+            TuitionEntity tuitionEntity = new TuitionEntity();
+            tuitionEntity.setPayMoney(money);
+            tuitionEntity.setPlaceId(Integer.parseInt(studentEntity.getPlaceId()));
+            tuitionEntity.setStudentId(studentEntity.getId());
+            tuitionEntity.setPayTime(format);
+            tuitionEntity.setDescription(desc);
+            tuitionEntity.setOrderno(Integer.parseInt(orderNo));
+            this.tuitionService.insertTuitionEntity(tuitionEntity);
+
+            sendTuitionSucMsg(studentEntity,money,String.valueOf(yuanmoney),studentEntity.getMoney());
+            return 1;
+        }catch (Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 
     /**
      * 学员报名
@@ -353,7 +502,7 @@ public class MiniAppController extends BaseController {
      */
     @PostMapping("/findAllStorages")
     public List<StorageEntity> findAllStorages(@RequestBody StorageEntity storageEntity){
-        return this.storageService.selectStorageEntityList(storageEntity);
+        return this.storageService.selectStorageEntityListNew(storageEntity);
     }
 
     /**
@@ -362,8 +511,8 @@ public class MiniAppController extends BaseController {
      * @param count
      * @return
      */
-    @PostMapping("/outStorage/{id}/{count}/{tel}")
-    public AjaxResult outStorage(@PathVariable Integer id,@PathVariable String count,@PathVariable String tel){
+    @PostMapping("/outStorage/{id}/{count}/{tel}/{orderNo}")
+    public AjaxResult outStorage(@PathVariable Integer id,@PathVariable String count,@PathVariable String tel,@PathVariable Integer orderNo){
         BigDecimal count2 = new BigDecimal(count);
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
@@ -378,6 +527,7 @@ public class MiniAppController extends BaseController {
                 purchaseDetailEntity.setBuyTel(tel);
                 purchaseDetailEntity.setBuyTime(format);
                 purchaseDetailEntity.setStorageId(Long.valueOf(id));
+                purchaseDetailEntity.setOrderno(orderNo);
                 purchaseDetailEntityService.insertPurchaseDetailEntity(purchaseDetailEntity);
                 return toAjax(1);
             }else{
@@ -389,32 +539,165 @@ public class MiniAppController extends BaseController {
     }
 
 
+    /**
+     * 根据字典类型查询字典数据信息
+     *
+     * @param dictType 字典类型
+     * @return 参数键值
+     */
+    @PostMapping("/getDictType/{dictType}")
+    public List<SysDictData> getDictType(@PathVariable String dictType)
+    {
+        return dictTypeService.selectDictDataByType(dictType);
+    }
 
-    @GetMapping(value = "/showImg")
-    public void showImg(HttpServletResponse response, String pathName) {
-        File imgFile = new File(pathName);
-        FileInputStream fin = null;
-        OutputStream output = null;
-        try {
-            output = response.getOutputStream();
-            fin = new FileInputStream(imgFile);
-            byte[] arr = new byte[1024 * 10];
-            int n;
-            while ((n = fin.read(arr)) != -1) {
-                output.write(arr, 0, n);
-            }
-            output.flush();
-        } catch (IOException e) {
-// TODO Auto-generated catch block
-            e.printStackTrace();
+    /**
+     * 根据字典类型和字典键值查询字典数据信息
+     *
+     * @param dictType 字典类型
+     * @param dictValue 字典键值
+     * @return 字典标签
+     */
+    @PostMapping("/getDictLabel/{dictType}/{dictValue}")
+    public String getDictLabel(@PathVariable String dictType, @PathVariable String dictValue)
+    {
+        return dictDataService.selectDictLabel(dictType, dictValue);
+    }
+
+    /**
+     * 根据手机号查询余额
+     * @param phone
+     * @return
+     */
+    @PostMapping("/queryBalanceByPhone/{phone}")
+    public int queryBalanceByPhone(@PathVariable String phone){
+        List<StudentEntity> list = this.studentService.findStudentByPhone(phone);
+        int money = 0;
+        for (StudentEntity studentEntity: list) {
+            money = money+Integer.parseInt(studentEntity.getMoney());
         }
+        return money;
+    }
+
+
+    /**
+     * 余额变动通知
+     * @param
+     */
+    public void sendYuEMsg(StudentSignEntity studentSignEntity){
+        StudentEntity studentEntity = this.studentService.selectStudentEntityById(studentSignEntity.getStudentId());
         try {
-            output.close();
-        } catch (IOException e) {
-// TODO Auto-generated catch block
+            Date date = DateUtil.date();
+            String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+            Credential cred = new Credential("AKID2SdZGi9rYzqSpvhOybkeHfmcJl47lRiF", "R8ZjdJkwSt87WltukJdq1wb6SdaFi0xe");
+            HttpProfile httpProfile = new HttpProfile();
+            httpProfile.setReqMethod("POST");
+            httpProfile.setConnTimeout(60);
+            httpProfile.setEndpoint("sms.tencentcloudapi.com");
+            ClientProfile clientProfile = new ClientProfile();
+            /* SDK 默认用 TC3-HMAC-SHA256 进行签名
+             * 非必要请不要修改该字段 */
+            clientProfile.setSignMethod("HmacSHA256");
+            clientProfile.setHttpProfile(httpProfile);
+            SmsClient client = new SmsClient(cred, "ap-guangzhou",clientProfile);
+            SendSmsRequest req = new SendSmsRequest();
+            String appid = "1400510386";
+            req.setSmsSdkAppid(appid);
+            /* 短信签名内容: 使用 UTF-8 编码，必须填写已审核通过的签名，可登录 [短信控制台] 查看签名信息 */
+            String sign = "零之启乒乓";
+            req.setSign(sign);
+            /* 国际/港澳台短信 senderid: 国内短信填空，默认未开通，如需开通请联系 [sms helper] */
+            String senderid = "";
+            req.setSenderId(senderid);
+            /* 用户的 session 内容: 可以携带用户侧 ID 等上下文信息，server 会原样返回 */
+            /* 短信码号扩展号: 默认未开通，如需开通请联系 [sms helper] */
+            /* 模板 ID: 必须填写已审核通过的模板 ID，可登录 [短信控制台] 查看模板 ID */
+            String templateID = "932023";
+            req.setTemplateID(templateID);
+            /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
+             * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
+            String[] phoneNumbers = {"+86"+studentEntity.getParentTel()};
+            req.setPhoneNumberSet(phoneNumbers);
+            /* 模板参数: 若无模板参数，则设置为空*/
+            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),studentEntity.getMoney()};
+            req.setTemplateParamSet(templateParams);
+            SendSmsResponse res = client.SendSms(req);
+            // 输出 JSON 格式的字符串回包
+            System.out.println(SendSmsResponse.toJsonString(res));
+            // 可以取出单个值，您可以通过官网接口文档或跳转到 response 对象的定义处查看返回字段的定义
+            System.out.println(res.getRequestId());
+
+
+            SendMsgEntity sendMsgEntity = new SendMsgEntity();
+            sendMsgEntity.setContent("您好，您的孩子"+studentEntity.getName()+"于"+format+"签到，本节价格为"
+                    +studentSignEntity.getMoney()+"元，剩余金额为"+studentEntity.getMoney()+"元");
+            sendMsgEntity.setSendTime(format);
+            sendMsgEntity.setSendMobile(studentEntity.getParentTel());
+            this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
+
+
+        }catch(TencentCloudSDKException e) {
             e.printStackTrace();
         }
     }
 
+
+    /**
+     * 充值成功通知
+     * @param
+     */
+    public void sendTuitionSucMsg(StudentEntity studentEntity,String money,String yuanmoney,String newMoney){
+        try {
+            Date date = DateUtil.date();
+            String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
+            Credential cred = new Credential("AKID2SdZGi9rYzqSpvhOybkeHfmcJl47lRiF", "R8ZjdJkwSt87WltukJdq1wb6SdaFi0xe");
+            HttpProfile httpProfile = new HttpProfile();
+            httpProfile.setReqMethod("POST");
+            httpProfile.setConnTimeout(60);
+            httpProfile.setEndpoint("sms.tencentcloudapi.com");
+            ClientProfile clientProfile = new ClientProfile();
+            /* SDK 默认用 TC3-HMAC-SHA256 进行签名
+             * 非必要请不要修改该字段 */
+            clientProfile.setSignMethod("HmacSHA256");
+            clientProfile.setHttpProfile(httpProfile);
+            SmsClient client = new SmsClient(cred, "ap-guangzhou",clientProfile);
+            SendSmsRequest req = new SendSmsRequest();
+            String appid = "1400510386";
+            req.setSmsSdkAppid(appid);
+            /* 短信签名内容: 使用 UTF-8 编码，必须填写已审核通过的签名，可登录 [短信控制台] 查看签名信息 */
+            String sign = "零之启乒乓";
+            req.setSign(sign);
+            /* 国际/港澳台短信 senderid: 国内短信填空，默认未开通，如需开通请联系 [sms helper] */
+            String senderid = "";
+            req.setSenderId(senderid);
+            /* 用户的 session 内容: 可以携带用户侧 ID 等上下文信息，server 会原样返回 */
+            /* 短信码号扩展号: 默认未开通，如需开通请联系 [sms helper] */
+            /* 模板 ID: 必须填写已审核通过的模板 ID，可登录 [短信控制台] 查看模板 ID */
+            String templateID = "933073";
+            req.setTemplateID(templateID);
+            /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
+             * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
+            String[] phoneNumbers = {"+86"+studentEntity.getParentTel()};
+            req.setPhoneNumberSet(phoneNumbers);
+            /* 模板参数: 若无模板参数，则设置为空*/
+            String[] templateParams = {format,money,yuanmoney,newMoney};
+            req.setTemplateParamSet(templateParams);
+            SendSmsResponse res = client.SendSms(req);
+            // 输出 JSON 格式的字符串回包
+            System.out.println(SendSmsResponse.toJsonString(res));
+            // 可以取出单个值，您可以通过官网接口文档或跳转到 response 对象的定义处查看返回字段的定义
+            System.out.println(res.getRequestId());
+
+
+            SendMsgEntity sendMsgEntity = new SendMsgEntity();
+            sendMsgEntity.setContent("尊敬的客户，您好，您于"+format+"成功充值"+money+"元，充值前账户余额为"+yuanmoney+"元，充值后账户余额为"+newMoney+"元，感谢您对我们的信赖");
+            sendMsgEntity.setSendTime(format);
+            sendMsgEntity.setSendMobile(studentEntity.getParentTel());
+            this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
+
+        }catch(TencentCloudSDKException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

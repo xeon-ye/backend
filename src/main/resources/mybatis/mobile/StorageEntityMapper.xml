@@ -12,17 +12,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="inventory"    column="inventory"    />
         <result property="remark"    column="remark"    />
         <result property="imgUrl"    column="img_url"    />
+        <result property="type"    column="type"    />
     </resultMap>
 
     <sql id="selectStorageEntityVo">
-        select id, name, brand, price, inventory, remark, img_url from tt_storage
+        select id, name, brand, price, inventory, remark, img_url,type from tt_storage
     </sql>
 
     <select id="selectStorageEntityList" parameterType="StorageEntity" resultMap="StorageEntityResult">
         <include refid="selectStorageEntityVo"/>
         <where>  
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+
+    <select id="selectStorageEntityListNew" parameterType="StorageEntity" resultMap="StorageEntityResult">
+        select * from tt_storage
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+
         </where>
     </select>
     
@@ -40,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inventory != null">inventory,</if>
             <if test="remark != null">remark,</if>
             <if test="imgUrl != null">img_url,</if>
+            <if test="type != null">type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null">#{name},</if>
@@ -48,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inventory != null">#{inventory},</if>
             <if test="remark != null">#{remark},</if>
             <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="type != null">#{type},</if>
          </trim>
     </insert>
 
@@ -60,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inventory != null">inventory = #{inventory},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="type != null">type = #{type},</if>
         </trim>
         where id = #{id}
     </update>

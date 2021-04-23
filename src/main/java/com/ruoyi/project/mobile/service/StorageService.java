@@ -27,6 +27,8 @@ public interface StorageService
      */
     public List<StorageEntity> selectStorageEntityList(StorageEntity storageEntity);
 
+    public List<StorageEntity> selectStorageEntityListNew(StorageEntity storageEntity);
+
     /**
      * 新增商品库存
      * 

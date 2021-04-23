@@ -364,6 +364,56 @@ public class WeiXinPayServiceImpl implements WeiXinPayService {
         return userInfo;
     }
 
+    @Override
+    public String getUserPhoneNumber(String encryptedData, String sessionkey, String iv,String openid) {
+        byte[] encrypData = Base64.decodeBase64(encryptedData);
+        byte[] ivData = Base64.decodeBase64(iv);
+        byte[] sessionKey = Base64.decodeBase64(sessionkey);
+
+        String userInfo = "";
+
+        AESDecodeUtils aesDecodeUtils = new AESDecodeUtils();
+        try {
+            //根据sessionKey和iv，对encrypData进行解码，获取用户信息
+            userInfo = aesDecodeUtils.decrypt(sessionKey, ivData, encrypData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        WxUserInfoEntity wxUserInfoEntity;
+
+        //用户手机号信息
+        JSONObject jsonObject = JSONObject.fromObject(userInfo);
+        String phoneNumber = jsonObject.get("phoneNumber").toString();
+        String purePhoneNumber = jsonObject.get("purePhoneNumber").toString();
+        String countryCode = jsonObject.get("countryCode").toString();
+
+
+        //存入微信用户基本信息
+        wxUserInfoEntity = this.wxUserInfoService.findWxUserInfoByOpenId(openid);
+        //如果当前用户信息不为空，修改原来的信息
+        if (wxUserInfoEntity != null) {
+            wxUserInfoEntity.setId(wxUserInfoEntity.getId());
+            wxUserInfoEntity.setPhoneNumber(phoneNumber);
+            wxUserInfoEntity.setPurePhoneNumber(purePhoneNumber);
+            wxUserInfoEntity.setCountryCode(countryCode);
+
+            wxUserInfoEntity.setUpdateDateTime(DateUtil.now());
+            this.wxUserInfoService.updateWxUserInfoEntity(wxUserInfoEntity);
+            //如果当前用户信息为空，插入新的信息
+        } else {
+            wxUserInfoEntity = new WxUserInfoEntity();
+            wxUserInfoEntity.setOpenCode(openid);
+            wxUserInfoEntity.setPhoneNumber(phoneNumber);
+            wxUserInfoEntity.setPurePhoneNumber(purePhoneNumber);
+            wxUserInfoEntity.setCountryCode(countryCode);
+            wxUserInfoEntity.setUpdateDateTime(DateUtil.now());
+            this.wxUserInfoService.insertWxUserInfoEntity(wxUserInfoEntity);
+        }
+
+
+        return userInfo;
+    }
 
 
 }

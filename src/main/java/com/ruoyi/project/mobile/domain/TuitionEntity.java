@@ -45,6 +45,7 @@ public class TuitionEntity extends BaseEntity
     /** 缴费时间 */
     @Excel(name = "缴费时间")
     private String payTime;
+    private Integer orderno;
 
     /** 场地名 */
     @Excel(name = "场地名")
@@ -161,6 +162,14 @@ public class TuitionEntity extends BaseEntity
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+
+    public Integer getOrderno() {
+        return orderno;
+    }
+
+    public void setOrderno(Integer orderno) {
+        this.orderno = orderno;
     }
 
     @Override

@@ -54,4 +54,10 @@ public interface WeiXinPayService {
      */
     String getUserInfo(String sessionkey, String encryptedData, String iv, String openid, String userInfos);
 
+    /**
+     * 获取用户手机号
+     * @return
+     */
+    String getUserPhoneNumber(String encryptedData, String sessionkey, String iv,String openid);
+
 }

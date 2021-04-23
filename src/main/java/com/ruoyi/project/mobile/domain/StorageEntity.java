@@ -39,6 +39,8 @@ public class StorageEntity extends BaseEntity
     @Excel(name = "图片")
     private String imgUrl;
 
+    private String type;
+
     public void setId(Integer id) 
     {
         this.id = id;
@@ -92,6 +94,14 @@ public class StorageEntity extends BaseEntity
     public String getImgUrl() 
     {
         return imgUrl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

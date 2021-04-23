@@ -74,5 +74,5 @@ public interface WxUserInfoService
      * @param openId 用户唯一Id
      * @param userInfo  用户信息
      */
-    void saveUserInfoAndPhoneAndOpenId(String openId, String userInfo);
+    int saveUserInfoAndPhoneAndOpenId(String openId, String userInfo);
 }

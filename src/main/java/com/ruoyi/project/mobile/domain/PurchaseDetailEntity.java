@@ -39,6 +39,11 @@ public class PurchaseDetailEntity extends BaseEntity
     @Excel(name = "总消费")
     private String buyMoney;
 
+    /**
+     * 微信商户订单号
+     */
+    private int orderno;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -100,6 +105,14 @@ public class PurchaseDetailEntity extends BaseEntity
 
     public void setStorageName(String storageName) {
         this.storageName = storageName;
+    }
+
+    public int getOrderno() {
+        return orderno;
+    }
+
+    public void setOrderno(int orderno) {
+        this.orderno = orderno;
     }
 
     @Override

@@ -26,6 +26,7 @@ public interface StorageEntityMapper
      * @return 商品库存集合
      */
     public List<StorageEntity> selectStorageEntityList(StorageEntity storageEntity);
+    public List<StorageEntity> selectStorageEntityListNew(StorageEntity storageEntity);
 
     /**
      * 新增商品库存

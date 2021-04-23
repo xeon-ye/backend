@@ -43,6 +43,11 @@ public class StorageServiceImpl implements StorageService
         return storageEntityMapper.selectStorageEntityList(storageEntity);
     }
 
+    @Override
+    public List<StorageEntity> selectStorageEntityListNew(StorageEntity storageEntity) {
+        return storageEntityMapper.selectStorageEntityListNew(storageEntity);
+    }
+
     /**
      * 新增商品库存
      * 

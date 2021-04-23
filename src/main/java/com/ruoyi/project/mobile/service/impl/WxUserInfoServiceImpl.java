@@ -113,7 +113,7 @@ public class WxUserInfoServiceImpl implements WxUserInfoService
      * 插入用户信息，手机号，openId
      */
     @Override
-    public void saveUserInfoAndPhoneAndOpenId(String openId, String userInfo) {
+    public int saveUserInfoAndPhoneAndOpenId(String openId, String userInfo) {
         WxUserInfoEntity wxUserInfoEntity;
 
         WxUtil wxUtil = new WxUtil();
@@ -134,28 +134,26 @@ public class WxUserInfoServiceImpl implements WxUserInfoService
         wxUserInfoEntity = this.findWxUserInfoByOpenId(openId);
         //如果当前用户信息不为空，修改原来的信息
         if (wxUserInfoEntity != null) {
-//            wxUserInfoEntity.setId(wxUserInfoEntity.getId());
-//            wxUserInfoEntity.setNickName(nickName);
-//            wxUserInfoEntity.setGender(gender);
-//            wxUserInfoEntity.setLanguage(language);
-//            wxUserInfoEntity.setCity(city);
-//            wxUserInfoEntity.setProvince(province);
-//            wxUserInfoEntity.setCountry(country);
-//            wxUserInfoEntity.setAvatarUrl(avatarUrl);
-//            wxUserInfoEntity.setUpdateDateTime(wxUtil.getNowDate());
-//            this.updateWxUserInfo(wxUserInfoEntity);
+            wxUserInfoEntity.setId(wxUserInfoEntity.getId());
+            wxUserInfoEntity.setNickName(nickName);
+            wxUserInfoEntity.setGender(gender);
+            wxUserInfoEntity.setLanguage(language);
+            wxUserInfoEntity.setCity(city);
+            wxUserInfoEntity.setProvince(province);
+            wxUserInfoEntity.setCountry(country);
+            wxUserInfoEntity.setAvatarUrl(avatarUrl);
+            return this.wxUserInfoEntityMapper.updateWxUserInfoEntity(wxUserInfoEntity);
         } else{//如果当前用户信息为空，插入新的信息
-//            wxUserInfoEntity = new WxUserInfoEntity();
-//            wxUserInfoEntity.setOpenCode(openId);
-//            wxUserInfoEntity.setNickName(nickName);
-//            wxUserInfoEntity.setGender(gender);
-//            wxUserInfoEntity.setLanguage(language);
-//            wxUserInfoEntity.setCity(city);
-//            wxUserInfoEntity.setProvince(province);
-//            wxUserInfoEntity.setCountry(country);
-//            wxUserInfoEntity.setAvatarUrl(avatarUrl);//头像地址
-//            wxUserInfoEntity.setUpdateDateTime(wxUtil.getNowDate());
-//            this.addWxUserInfo(wxUserInfoEntity);
+            wxUserInfoEntity = new WxUserInfoEntity();
+            wxUserInfoEntity.setOpenCode(openId);
+            wxUserInfoEntity.setNickName(nickName);
+            wxUserInfoEntity.setGender(gender);
+            wxUserInfoEntity.setLanguage(language);
+            wxUserInfoEntity.setCity(city);
+            wxUserInfoEntity.setProvince(province);
+            wxUserInfoEntity.setCountry(country);
+            wxUserInfoEntity.setAvatarUrl(avatarUrl);//头像地址
+            return this.wxUserInfoEntityMapper.insertWxUserInfoEntity(wxUserInfoEntity);
         }
     }
 }

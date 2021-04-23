@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mobile.mapper.SendMsgEntityMapper">
+    
+    <resultMap type="SendMsgEntity" id="SendMsgEntityResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="sendTime"    column="send_time"    />
+        <result property="sendMobile"    column="send_mobile"    />
+    </resultMap>
+
+    <sql id="selectSendMsgEntityVo">
+        select id, content, send_time, send_mobile from tt_send_msg
+    </sql>
+
+    <select id="selectSendMsgEntityList" parameterType="SendMsgEntity" resultMap="SendMsgEntityResult">
+        <include refid="selectSendMsgEntityVo"/>
+        <where>  
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="sendTime != null  and sendTime != ''"> and send_time = #{sendTime}</if>
+            <if test="sendMobile != null  and sendMobile != ''"> and send_mobile = #{sendMobile}</if>
+        </where>
+    </select>
+    
+    <select id="selectSendMsgEntityById" parameterType="Integer" resultMap="SendMsgEntityResult">
+        <include refid="selectSendMsgEntityVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSendMsgEntity" parameterType="SendMsgEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into tt_send_msg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null">content,</if>
+            <if test="sendTime != null">send_time,</if>
+            <if test="sendMobile != null">send_mobile,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null">#{content},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="sendMobile != null">#{sendMobile},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSendMsgEntity" parameterType="SendMsgEntity">
+        update tt_send_msg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            <if test="sendMobile != null">send_mobile = #{sendMobile},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSendMsgEntityById" parameterType="Integer">
+        delete from tt_send_msg where id = #{id}
+    </delete>
+
+    <delete id="deleteSendMsgEntityByIds" parameterType="String">
+        delete from tt_send_msg where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

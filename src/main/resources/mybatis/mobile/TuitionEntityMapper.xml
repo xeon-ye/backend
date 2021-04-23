@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="payTime"    column="pay_time"    />
         <result property="placeId"    column="place_id"    />
         <result property="studentId"    column="student_id"    />
+        <result property="orderno"    column="orderno"    />
     </resultMap>
 
     <sql id="selectTuitionEntityVo">
-        select id, billing_type, charge_type, course_id, description, invoice, pay_money, pay_time, place_id, student_id from tt_tuition
+        select id, billing_type, charge_type, course_id, description, invoice, pay_money, pay_time, place_id, student_id,orderno from tt_tuition
     </sql>
 
     <select id="selectTuitionEntityList" parameterType="TuitionEntity" resultMap="TuitionEntityResult">
@@ -59,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payTime != null">pay_time,</if>
             <if test="placeId != null">place_id,</if>
             <if test="studentId != null">student_id,</if>
+            <if test="orderno != null">orderno,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="billingType != null">#{billingType},</if>
@@ -70,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payTime != null">#{payTime},</if>
             <if test="placeId != null">#{placeId},</if>
             <if test="studentId != null">#{studentId},</if>
+            <if test="orderno != null">#{orderno},</if>
          </trim>
     </insert>
 
@@ -85,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payTime != null">pay_time = #{payTime},</if>
             <if test="placeId != null">place_id = #{placeId},</if>
             <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="orderno != null">orderno = #{orderno},</if>
         </trim>
         where id = #{id}
     </update>

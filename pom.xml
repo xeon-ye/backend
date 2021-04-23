@@ -306,6 +306,13 @@
             <version>2.1.0</version>
         </dependency>
 
+        <!-- 腾讯云短信相关 -->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>4.0.11</version>
+        </dependency>
+
 
 
     </dependencies>
