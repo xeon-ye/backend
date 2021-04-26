@@ -43,6 +43,11 @@ public class TuitionServiceImpl implements TuitionService
         return tuitionEntityMapper.selectAllTuitionList(tuitionEntity);
     }
 
+    @Override
+    public List<TuitionEntity> selectAllTuitionByPhone(String tel) {
+        return tuitionEntityMapper.selectAllTuitionByPhone(tel);
+    }
+
     /**
      * 新增缴费信息
      * 

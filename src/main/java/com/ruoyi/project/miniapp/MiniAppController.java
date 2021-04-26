@@ -267,14 +267,15 @@ public class MiniAppController extends BaseController {
     @PostMapping("/findClassRecordByPhone/{phone}")
     public List<StudentSignEntity> findClassRecordByPhone(@PathVariable String phone){
         List<StudentSignEntity> listAll = new ArrayList<>();
-        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
-        for (StudentEntity studentEntity:studentEntityList) {
-            StudentSignEntity studentSignEntity = new StudentSignEntity();
-            int studentId = studentEntity.getId();
-            studentSignEntity.setStudentId(studentId);
-            List<StudentSignEntity> list = this.studentSignService.selectStudentSignNew(studentSignEntity);
-            listAll.addAll(list);
-        }
+        listAll = this.studentSignService.selectStudentSignByTel(phone);
+//        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
+//        for (StudentEntity studentEntity:studentEntityList) {
+//            StudentSignEntity studentSignEntity = new StudentSignEntity();
+//            int studentId = studentEntity.getId();
+//            studentSignEntity.setStudentId(studentId);
+//            List<StudentSignEntity> list = this.studentSignService.selectStudentSignNew(studentSignEntity);
+//            listAll.addAll(list);
+//        }
 
         return listAll;
     }
@@ -285,14 +286,15 @@ public class MiniAppController extends BaseController {
     @PostMapping("/findTuiDetailsByPhone/{phone}")
     public List<TuitionEntity> findTuiDetailsByPhone(@PathVariable String phone){
         List<TuitionEntity> listAll = new ArrayList<>();
-        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
-        for (StudentEntity studentEntity:studentEntityList) {
-            TuitionEntity tuitionEntity = new TuitionEntity();
-            int studentId = studentEntity.getId();
-            tuitionEntity.setStudentId(studentId);
-            List<TuitionEntity> list = this.tuitionService.selectTuitionEntityList(tuitionEntity);
-            listAll.addAll(list);
-        }
+        listAll = tuitionService.selectAllTuitionByPhone(phone);
+//        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
+//        for (StudentEntity studentEntity:studentEntityList) {
+//            TuitionEntity tuitionEntity = new TuitionEntity();
+//            int studentId = studentEntity.getId();
+//            tuitionEntity.setStudentId(studentId);
+//            List<TuitionEntity> list = this.tuitionService.selectTuitionEntityList(tuitionEntity);
+//            listAll.addAll(list);
+//        }
 
         return listAll;
     }
@@ -511,8 +513,21 @@ public class MiniAppController extends BaseController {
     public int addSignUp(@RequestBody SignUpEntity signUpEntity){
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
-        signUpEntity.setSignTime(format);
-        return this.signUpEntityService.insertSignUpEntity(signUpEntity);
+        try {
+            signUpEntity.setSignTime(format);
+            StudentEntity studentEntity = new StudentEntity();
+            studentEntity.setParentTel(signUpEntity.getPhone());
+            studentEntity.setName(signUpEntity.getName());
+            studentEntity.setPlaceId("1");
+            studentEntity.setRegistrTime(format);
+            studentEntity.setMoney("0");
+            this.studentService.insertStudentEntity(studentEntity);
+            this.signUpEntityService.insertSignUpEntity(signUpEntity);
+            return 1;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     /**

@@ -35,6 +35,13 @@ public interface StudentSignEntityMapper
      */
     public List<StudentSignEntity> selectStudentSignNew(StudentSignEntity studentSignEntity);
 
+    /**
+     * 根据手机号查询签到列表
+     * @param tel
+     * @return
+     */
+    public List<StudentSignEntity> selectStudentSignByTel(String tel);
+
 
     /**
      * 新增学员签到

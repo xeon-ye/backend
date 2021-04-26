@@ -42,6 +42,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+    <select id="selectAllTuitionByPhone" parameterType="String" resultMap="TuitionEntityResult">
+        select a.*,b.name studentName,c.name placeName from tt_tuition a LEFT JOIN tt_student b on a.student_id=b.id
+        left JOIN tt_place c on a.place_id = c.id
+        where b.parent_tel=#{tel}
+        order by a.id desc
+    </select>
+
+
 
     <select id="selectTuitionEntityById" parameterType="Integer" resultMap="TuitionEntityResult">
         <include refid="selectTuitionEntityVo"/>

@@ -34,6 +34,13 @@ public interface StudentSignService
      */
     public List<StudentSignEntity> selectStudentSignNew(StudentSignEntity studentSignEntity);
 
+    /**
+     * 手机号查询上课记录
+     * @param tel
+     * @return
+     */
+    public List<StudentSignEntity> selectStudentSignByTel(String tel);
+
 
 
     /**

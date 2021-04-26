@@ -28,6 +28,14 @@ public interface TuitionService
     public List<TuitionEntity> selectTuitionEntityList(TuitionEntity tuitionEntity);
 
     /**
+     * 查询缴费信息列表根据手机号
+     *
+     * @param tel 缴费信息
+     * @return 缴费信息集合
+     */
+    public List<TuitionEntity> selectAllTuitionByPhone(String tel);
+
+    /**
      * 新增缴费信息
      * 
      * @param tuitionEntity 缴费信息

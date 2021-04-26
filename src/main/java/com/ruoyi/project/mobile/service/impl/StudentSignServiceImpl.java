@@ -49,6 +49,12 @@ public class StudentSignServiceImpl implements StudentSignService
         return studentSignEntityMapper.selectStudentSignNew(studentSignEntity);
     }
 
+    @Override
+    public List<StudentSignEntity> selectStudentSignByTel(String tel) {
+        return studentSignEntityMapper.selectStudentSignByTel(tel);
+    }
+
+
     /**
      * 新增学员签到
      * 
