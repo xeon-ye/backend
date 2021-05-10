@@ -54,7 +54,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where b.parent_tel=#{tel}
         order by sign_time desc
     </select>
-    
+
+    <select id="coachFindSignDetails" parameterType="String" resultMap="StudentSignEntityResult">
+        select a.*,b.name studentName,c.name courseName,d.name coachName,e.name placeName from tt_student_sign a left join tt_student b on a.student_id=b.id
+        left join tt_course c on a.course_id = c.id
+        left join tt_coach d on a.user_id = d.id
+        left join tt_place e on a.place_id = e.id
+        where d.tel=#{tel}
+        order by sign_time desc
+    </select>
+
     <select id="selectStudentSignEntityById" parameterType="Integer" resultMap="StudentSignEntityResult">
         <include refid="selectStudentSignEntityVo"/>
         where id = #{id}

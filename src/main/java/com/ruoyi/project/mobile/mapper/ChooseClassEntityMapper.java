@@ -68,4 +68,9 @@ public interface ChooseClassEntityMapper
      * @return
      */
     List<ChooseClassEntity> findChooseClassEntitiesByCoachId(int coachId,String week);
+
+    /**
+     * 查询个人课程表(根据手机号)
+     */
+    public List<ChooseClassEntity> findChooseClassRecordByPhone(String tel,String state);
 }

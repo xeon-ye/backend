@@ -90,4 +90,9 @@ public class ChooseClassServiceImpl implements ChooseClassService
     {
         return chooseClassEntityMapper.deleteChooseClassEntityById(id);
     }
+
+    @Override
+    public List<ChooseClassEntity> findChooseClassRecordByPhone(String tel,String state) {
+        return chooseClassEntityMapper.findChooseClassRecordByPhone(tel,state);
+    }
 }

@@ -41,6 +41,13 @@ public interface StudentSignService
      */
     public List<StudentSignEntity> selectStudentSignByTel(String tel);
 
+    /**
+     * 教练查询上课记录
+     * @param tel
+     * @return
+     */
+    public List<StudentSignEntity> coachFindSignDetails(String tel);
+
 
 
     /**

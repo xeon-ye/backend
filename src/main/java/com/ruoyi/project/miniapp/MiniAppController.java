@@ -77,6 +77,10 @@ public class MiniAppController extends BaseController {
     private ISysDictTypeService dictTypeService;
     @Autowired
     private ISendMsgEntityService sendMsgEntityService;
+    @Autowired
+    private IBtnMenuEntityService btnMenuEntityService;
+    @Autowired
+    private ChooseClassService chooseClassService;
 
 
     /**
@@ -180,6 +184,17 @@ public class MiniAppController extends BaseController {
     }
 
     /**
+     * 查询个人课程表(根据手机号)
+     */
+    @PostMapping("/findChooseClassRecordByPhone/{phone}/{state}")
+    public List<ChooseClassEntity> findChooseClassRecordByPhone(@PathVariable String phone,@PathVariable String state){
+        List<ChooseClassEntity> listAll = new ArrayList<>();
+        listAll = this.chooseClassService.findChooseClassRecordByPhone(phone,state);
+
+        return listAll;
+    }
+
+    /**
      * 查询是否存在教练
      * @return
      */
@@ -262,23 +277,17 @@ public class MiniAppController extends BaseController {
     }
 
     /**
-     * 查询上课记录(根据手机号)
+     * 查询个人上课记录(根据手机号)
      */
     @PostMapping("/findClassRecordByPhone/{phone}")
     public List<StudentSignEntity> findClassRecordByPhone(@PathVariable String phone){
         List<StudentSignEntity> listAll = new ArrayList<>();
         listAll = this.studentSignService.selectStudentSignByTel(phone);
-//        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
-//        for (StudentEntity studentEntity:studentEntityList) {
-//            StudentSignEntity studentSignEntity = new StudentSignEntity();
-//            int studentId = studentEntity.getId();
-//            studentSignEntity.setStudentId(studentId);
-//            List<StudentSignEntity> list = this.studentSignService.selectStudentSignNew(studentSignEntity);
-//            listAll.addAll(list);
-//        }
 
         return listAll;
     }
+
+
 
     /**
      * 查询缴费记录(根据手机号)
@@ -287,14 +296,18 @@ public class MiniAppController extends BaseController {
     public List<TuitionEntity> findTuiDetailsByPhone(@PathVariable String phone){
         List<TuitionEntity> listAll = new ArrayList<>();
         listAll = tuitionService.selectAllTuitionByPhone(phone);
-//        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(phone);
-//        for (StudentEntity studentEntity:studentEntityList) {
-//            TuitionEntity tuitionEntity = new TuitionEntity();
-//            int studentId = studentEntity.getId();
-//            tuitionEntity.setStudentId(studentId);
-//            List<TuitionEntity> list = this.tuitionService.selectTuitionEntityList(tuitionEntity);
-//            listAll.addAll(list);
-//        }
+
+        return listAll;
+    }
+
+
+    /**
+     * 教练查询签到记录(根据手机号)
+     */
+    @PostMapping("/coachFindSignDetails/{phone}")
+    public List<StudentSignEntity> coachFindSignDetails(@PathVariable String phone){
+        List<StudentSignEntity> listAll = new ArrayList<>();
+        listAll = studentSignService.coachFindSignDetails(phone);
 
         return listAll;
     }
@@ -349,7 +362,7 @@ public class MiniAppController extends BaseController {
             this.studentService.updateStudentEntity(studentEntity);
             this.studentSignService.insertStudentSignEntity(studentSignEntity);
             //发送短信
-            sendYuEMsg(studentSignEntity);
+            sendYuEMsg(studentSignEntity,studentEntity.getParentTel());
         }catch (Exception e){
             e.printStackTrace();
             return AjaxResult.error("签到失败");
@@ -541,6 +554,26 @@ public class MiniAppController extends BaseController {
     }
 
     /**
+     * 查询首页菜单权限
+     * @param
+     * @return
+     */
+    @PostMapping("/findAllBtnMenuByTel/{tel}")
+    public List<BtnMenuEntity> findAllBtnMenu(@PathVariable String tel){
+        List<CoachEntity> coachEntityList = this.coachService.findCoachByPhone(tel);
+        String type="0";//普通用户
+        if(coachEntityList.size()>0){
+            type="1";
+        }
+        BtnMenuEntity btnMenuEntity = new BtnMenuEntity();
+        btnMenuEntity.setMenuRole(type);
+        btnMenuEntity.setUseFlag("1");
+        List<BtnMenuEntity> btnMenuEntityList = this.btnMenuEntityService.selectBtnMenuEntityList(btnMenuEntity);
+
+        return btnMenuEntityList;
+    }
+
+    /**
      * 商品出库
      * @param id
      * @param count
@@ -619,8 +652,10 @@ public class MiniAppController extends BaseController {
      * 余额变动通知
      * @param
      */
-    public void sendYuEMsg(StudentSignEntity studentSignEntity){
+    public void sendYuEMsg(StudentSignEntity studentSignEntity,String tel){
         StudentEntity studentEntity = this.studentService.selectStudentEntityById(studentSignEntity.getStudentId());
+
+        int allMoney = queryBalanceByPhone(tel);
         try {
             Date date = DateUtil.date();
             String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
@@ -654,7 +689,8 @@ public class MiniAppController extends BaseController {
             String[] phoneNumbers = {"+86"+studentEntity.getParentTel()};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
-            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),studentEntity.getMoney()};
+//            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),studentEntity.getMoney()};
+            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),String.valueOf(allMoney)};
             req.setTemplateParamSet(templateParams);
             SendSmsResponse res = client.SendSms(req);
             // 输出 JSON 格式的字符串回包
@@ -665,7 +701,7 @@ public class MiniAppController extends BaseController {
 
             SendMsgEntity sendMsgEntity = new SendMsgEntity();
             sendMsgEntity.setContent("您好，您的孩子"+studentEntity.getName()+"于"+format+"签到，本节价格为"
-                    +studentSignEntity.getMoney()+"元，剩余金额为"+studentEntity.getMoney()+"元");
+                    +studentSignEntity.getMoney()+"元，剩余金额为"+allMoney+"元");
             sendMsgEntity.setSendTime(format);
             sendMsgEntity.setSendMobile(studentEntity.getParentTel());
             this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);

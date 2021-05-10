@@ -25,6 +25,7 @@ public class ChooseClassEntity extends BaseEntity
     /** 场地 */
     @Excel(name = "场地")
     private String placeId;
+    private String placeName;
 
     /** 开始时间 */
     @Excel(name = "开始时间")
@@ -37,10 +38,15 @@ public class ChooseClassEntity extends BaseEntity
     /** 课程 */
     @Excel(name = "课程")
     private Integer courseId;
+    private String courseName;
 
     /** 教练 */
     @Excel(name = "教练")
     private Integer coachId;
+    private String coachName;
+
+    private Integer studentId;
+    private String studentName;
 
     public void setId(Integer id) 
     {
@@ -104,6 +110,46 @@ public class ChooseClassEntity extends BaseEntity
     public Integer getCoachId() 
     {
         return coachId;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCoachName() {
+        return coachName;
+    }
+
+    public void setCoachName(String coachName) {
+        this.coachName = coachName;
+    }
+
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 
     @Override

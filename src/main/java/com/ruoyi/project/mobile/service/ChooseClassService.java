@@ -58,4 +58,9 @@ public interface ChooseClassService
      * @return 结果
      */
     public int deleteChooseClassEntityById(Integer id);
+
+    /**
+     * 查询个人课程表(根据手机号)
+     */
+    public List<ChooseClassEntity> findChooseClassRecordByPhone(String tel,String state);
 }
