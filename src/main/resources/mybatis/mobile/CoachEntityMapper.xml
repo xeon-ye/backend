@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="onLeave"    column="on_leave"    />
         <result property="onWork"    column="on_work"    />
         <result property="placeId"    column="place_id"    />
+        <result property="placeName"    column="place_name"    />
         <result property="remarks"    column="remarks"    />
         <result property="tel"    column="tel"    />
     </resultMap>
@@ -33,6 +34,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
         </where>
     </select>
+
+    <select id="selectCoachEntityListNew" parameterType="CoachEntity" resultMap="CoachEntityResult">
+        select a.*,b.name place_name from tt_coach a left join tt_place b on a.place_id = b.id
+        <where>
+            <if test="isFullTime != null  and isFullTime != ''"> and a.is_full_time = #{isFullTime}</if>
+            <if test="name != null  and name != ''"> and a.name like concat('%', #{name}, '%')</if>
+            <if test="onLeave != null  and onLeave != ''"> and a.on_leave = #{onLeave}</if>
+            <if test="placeId != null "> and a.place_id = #{placeId}</if>
+            <if test="tel != null  and tel != ''"> and a.tel = #{tel}</if>
+        </where>
+    </select>
+
+
     
     <select id="selectCoachEntityById" parameterType="Integer" resultMap="CoachEntityResult">
         <include refid="selectCoachEntityVo"/>
@@ -104,8 +118,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="findCoachByPhone" parameterType="String" resultMap="CoachEntityResult">
-        <include refid="selectCoachEntityVo"/>
-        where tel = #{phone}
+        select a.*,b.name place_name from tt_coach a left join tt_place b on a.place_id = b.id
+        where a.tel = #{phone}
     </select>
 
 

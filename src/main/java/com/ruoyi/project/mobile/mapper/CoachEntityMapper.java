@@ -29,6 +29,7 @@ public interface CoachEntityMapper
      * @return 教练信息集合
      */
     public List<CoachEntity> selectCoachEntityList(CoachEntity coachEntity);
+    public List<CoachEntity> selectCoachEntityListNew(CoachEntity coachEntity);
 
     /**
      * 新增教练信息

@@ -49,7 +49,7 @@ public class CoachServiceImpl implements CoachService
     @Override
     public List<CoachEntity> selectCoachEntityList(CoachEntity coachEntity)
     {
-        return coachEntityMapper.selectCoachEntityList(coachEntity);
+        return coachEntityMapper.selectCoachEntityListNew(coachEntity);
     }
 
     /**

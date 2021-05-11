@@ -53,6 +53,7 @@ public class CoachEntity extends BaseEntity
     /** 场地 */
     @Excel(name = "场地")
     private Integer placeId;
+    private String placeName;
 
     /** 简单描述 */
     @Excel(name = "简单描述")
@@ -169,6 +170,14 @@ public class CoachEntity extends BaseEntity
     public String getTel() 
     {
         return tel;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     @Override
