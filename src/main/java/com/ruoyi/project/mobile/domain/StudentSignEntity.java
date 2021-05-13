@@ -52,7 +52,7 @@ public class StudentSignEntity extends BaseEntity
 
     /** 本节价格 */
     @Excel(name = "本节价格")
-    private Integer money;
+    private String money;
 
     /** 备注 */
     @Excel(name = "备注")
@@ -121,16 +121,16 @@ public class StudentSignEntity extends BaseEntity
     {
         return userId;
     }
-    public void setMoney(Integer money) 
-    {
+
+    public String getMoney() {
+        return money;
+    }
+
+    public void setMoney(String money) {
         this.money = money;
     }
 
-    public Integer getMoney() 
-    {
-        return money;
-    }
-    public void setRemarks(String remarks) 
+    public void setRemarks(String remarks)
     {
         this.remarks = remarks;
     }

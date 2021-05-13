@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.security.AlgorithmParameters;
 import java.security.Security;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -145,12 +146,13 @@ public class MiniAppController extends BaseController {
 
     /**
      * 获取授权用户手机号
+     *
      * @return
      */
     @RequestMapping("/getUserPhoneNumber")
     @ResponseBody
-    public Object getUserPhoneNumber(String encryptedData, String sessionkey, String iv,String openid) {
-       return this.weiXinPayService.getUserPhoneNumber(encryptedData,sessionkey,iv,openid);
+    public Object getUserPhoneNumber(String encryptedData, String sessionkey, String iv, String openid) {
+        return this.weiXinPayService.getUserPhoneNumber(encryptedData, sessionkey, iv, openid);
     }
 
 
@@ -175,11 +177,12 @@ public class MiniAppController extends BaseController {
 
     /**
      * 查询教练和课程列表
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/findCoachAndClass/{state}")
-    public List<Map<String, Object>> findCoachAndClass(@PathVariable String state){
+    @RequestMapping(value = "/findCoachAndClass/{state}")
+    public List<Map<String, Object>> findCoachAndClass(@PathVariable String state) {
         return this.coachService.findCoachAndClass(state);
     }
 
@@ -187,57 +190,61 @@ public class MiniAppController extends BaseController {
      * 查询个人课程表(根据手机号)
      */
     @PostMapping("/findChooseClassRecordByPhone/{phone}/{state}")
-    public List<ChooseClassEntity> findChooseClassRecordByPhone(@PathVariable String phone,@PathVariable String state){
+    public List<ChooseClassEntity> findChooseClassRecordByPhone(@PathVariable String phone, @PathVariable String state) {
         List<ChooseClassEntity> listAll = new ArrayList<>();
-        listAll = this.chooseClassService.findChooseClassRecordByPhone(phone,state);
+        listAll = this.chooseClassService.findChooseClassRecordByPhone(phone, state);
 
         return listAll;
     }
 
     /**
      * 查询是否存在教练
+     *
      * @return
      */
     @PostMapping("/findExistCoach/{phone}")
-    public CoachEntity findExistCoach(@PathVariable String phone){
+    public CoachEntity findExistCoach(@PathVariable String phone) {
         CoachEntity coachEntity = new CoachEntity();
         //手机号查询教练
         List<CoachEntity> coachEntitys = this.coachService.findCoachByPhone(phone);
-        if(coachEntitys.size()>0){
-            coachEntity =  coachEntitys.get(0);
+        if (coachEntitys.size() > 0) {
+            coachEntity = coachEntitys.get(0);
         }
         return coachEntity;
     }
 
     /**
      * 查询公告
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/findGongGaoNotice/{type}")
-    public List<NoticeEntity> findGongGaoNotice(@PathVariable Integer type){
+    @RequestMapping(value = "/findGongGaoNotice/{type}")
+    public List<NoticeEntity> findGongGaoNotice(@PathVariable Integer type) {
         return this.noticeService.findAllNoticeByType(type);
     }
 
     /**
      * 查询公告明细
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/findNoticeDetail/{noticeId}")
-    public NoticeEntity findNoticeDetail(@PathVariable Integer noticeId){
+    @RequestMapping(value = "/findNoticeDetail/{noticeId}")
+    public NoticeEntity findNoticeDetail(@PathVariable Integer noticeId) {
         return this.noticeService.selectNoticeEntityById(noticeId);
     }
 
     /**
      * 查询消息列表
+     *
      * @return
      */
     @PostMapping("/findXiaoxiListByTypeAndTel/{type}/{tel}")
-    public List<NoticeEntity> findXiaoxiListByTypeAndTel(@PathVariable Integer type,@PathVariable String tel){
+    public List<NoticeEntity> findXiaoxiListByTypeAndTel(@PathVariable Integer type, @PathVariable String tel) {
         List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(tel);
         List<NoticeEntity> newnoticeEntityList = new ArrayList<>();
-        if(studentEntityList.size()>0){
+        if (studentEntityList.size() > 0) {
             for (StudentEntity stu : studentEntityList) {
                 NoticeEntity noticeEntity = new NoticeEntity();
                 noticeEntity.setType(String.valueOf(type));
@@ -253,11 +260,11 @@ public class MiniAppController extends BaseController {
      * 查询学员列表
      */
     @PostMapping("/findStudentsList/{phone}/{placeId}")
-    public List<StudentEntity> findStudentsList(@PathVariable String phone, @PathVariable String placeId){
-        List<StudentEntity> studentEntityList =null;
+    public List<StudentEntity> findStudentsList(@PathVariable String phone, @PathVariable String placeId) {
+        List<StudentEntity> studentEntityList = null;
         //查询是否是教练
         List<CoachEntity> list = this.coachService.findCoachByPhone(phone);
-        if(list.size()>0){
+        if (list.size() > 0) {
             StudentEntity studentEntity = new StudentEntity();
             studentEntity.setPlaceId(placeId);
             studentEntityList = this.studentService.selectStudentEntityList(studentEntity);
@@ -269,7 +276,7 @@ public class MiniAppController extends BaseController {
      * 查询上课记录(根据学生id)
      */
     @PostMapping("/findClassRecord/{studentId}")
-    public List<StudentSignEntity> findClassRecord(@PathVariable Integer studentId){
+    public List<StudentSignEntity> findClassRecord(@PathVariable Integer studentId) {
         StudentSignEntity studentSignEntity = new StudentSignEntity();
         studentSignEntity.setStudentId(studentId);
         List<StudentSignEntity> list = this.studentSignService.selectStudentSignNew(studentSignEntity);
@@ -280,7 +287,7 @@ public class MiniAppController extends BaseController {
      * 查询个人上课记录(根据手机号)
      */
     @PostMapping("/findClassRecordByPhone/{phone}")
-    public List<StudentSignEntity> findClassRecordByPhone(@PathVariable String phone){
+    public List<StudentSignEntity> findClassRecordByPhone(@PathVariable String phone) {
         List<StudentSignEntity> listAll = new ArrayList<>();
         listAll = this.studentSignService.selectStudentSignByTel(phone);
 
@@ -288,12 +295,11 @@ public class MiniAppController extends BaseController {
     }
 
 
-
     /**
      * 查询缴费记录(根据手机号)
      */
     @PostMapping("/findTuiDetailsByPhone/{phone}")
-    public List<TuitionEntity> findTuiDetailsByPhone(@PathVariable String phone){
+    public List<TuitionEntity> findTuiDetailsByPhone(@PathVariable String phone) {
         List<TuitionEntity> listAll = new ArrayList<>();
         listAll = tuitionService.selectAllTuitionByPhone(phone);
 
@@ -305,7 +311,7 @@ public class MiniAppController extends BaseController {
      * 教练查询签到记录(根据手机号)
      */
     @PostMapping("/coachFindSignDetails/{phone}")
-    public List<StudentSignEntity> coachFindSignDetails(@PathVariable String phone){
+    public List<StudentSignEntity> coachFindSignDetails(@PathVariable String phone) {
         List<StudentSignEntity> listAll = new ArrayList<>();
         listAll = studentSignService.coachFindSignDetails(phone);
 
@@ -314,30 +320,33 @@ public class MiniAppController extends BaseController {
 
     /**
      * 查询手机号下绑定的学员
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/findStudentByPhone/{phone}")
-    public List<StudentEntity> findStudentByPhone(@PathVariable String phone){
+    @RequestMapping(value = "/findStudentByPhone/{phone}")
+    public List<StudentEntity> findStudentByPhone(@PathVariable String phone) {
         return this.studentService.findStudentByPhone(phone);
     }
 
     /**
      * 查询场地下的学员
+     *
      * @return
      */
     @PostMapping("/queryStudentByPlace/{placeId}")
-    public List<StudentEntity> queryStudentByPlace(@PathVariable String placeId){
+    public List<StudentEntity> queryStudentByPlace(@PathVariable String placeId) {
         return this.studentService.findStudentByPlace(placeId);
     }
 
     /**
      * 教练给学生签到
+     *
      * @param
      * @param
      */
     @PostMapping("/studentSignByCoach")
-    public AjaxResult studentSignByCoach(@RequestBody StudentSignEntity studentSignEntity){
+    public AjaxResult studentSignByCoach(@RequestBody StudentSignEntity studentSignEntity) {
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
         String phone = studentSignEntity.getRemarks();
@@ -348,22 +357,30 @@ public class MiniAppController extends BaseController {
         studentSignEntity.setRemarks("");
 
         try {
-            CourseEntity courseEntity =this.courseService.selectCourseEntityById(studentSignEntity.getCourseId());
+            CourseEntity courseEntity = this.courseService.selectCourseEntityById(studentSignEntity.getCourseId());
             StudentEntity studentEntity = this.studentService.selectStudentEntityById(studentSignEntity.getStudentId());
 
-            if(studentEntity.getUnitPrice()!=null && !studentEntity.getUnitPrice().equals("")  && studentSignEntity.getCourseId()==9){//如果单价不为空,并且是单陪课
-                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())-Integer.parseInt(studentEntity.getUnitPrice())));
-                studentSignEntity.setMoney(Integer.parseInt(studentEntity.getUnitPrice()));//存入本节课价格
-            }else{
-                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())-Integer.parseInt(courseEntity.getMoney())));
-                studentSignEntity.setMoney(Integer.parseInt(courseEntity.getMoney()));//存入本节课价格
+            //如果单价不为空,并且是单陪课
+            if (studentEntity.getUnitPrice() != null && !studentEntity.getUnitPrice().equals("") && courseEntity.getId()!=1) {
+                if(courseEntity.getClassHours().equals("1")){
+                    studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(studentEntity.getUnitPrice())));
+                    studentSignEntity.setMoney(studentEntity.getUnitPrice());//存入本节课价格
+                }else{
+                    String realMoney = Double.toString(Math.floor(Float.parseFloat(studentEntity.getUnitPrice())*Float.parseFloat(courseEntity.getClassHours())));
+                    studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(subZeroAndDot(realMoney))));
+                    studentSignEntity.setMoney(subZeroAndDot(realMoney));//存入本节课价格
+                }
+
+            } else {
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(courseEntity.getMoney())));
+                studentSignEntity.setMoney(courseEntity.getMoney());//存入本节课价格
             }
 
             this.studentService.updateStudentEntity(studentEntity);
             this.studentSignService.insertStudentSignEntity(studentSignEntity);
             //发送短信
-            sendYuEMsg(studentSignEntity,studentEntity.getParentTel());
-        }catch (Exception e){
+            sendYuEMsg(studentSignEntity, studentEntity.getParentTel());
+        } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error("签到失败");
         }
@@ -371,43 +388,60 @@ public class MiniAppController extends BaseController {
     }
 
     /**
+     * 使用java正则表达式去掉多余的.与0
+     * @param s
+     * @return
+     */
+    public static String subZeroAndDot(String s){
+        if(s.indexOf(".") > 0){
+            s = s.replaceAll("0+?$", "");//去掉多余的0
+            s = s.replaceAll("[.]$", "");//如最后一位是.则去掉
+        }
+        return s;
+    }
+
+    /**
      * 查询场地列表
+     *
      * @param placeEntity
      * @return
      */
     @PostMapping("/queryPlaces")
-    public List<PlaceEntity> queryPlaces(@RequestBody PlaceEntity placeEntity,HttpServletRequest httpServletRequest){
+    public List<PlaceEntity> queryPlaces(@RequestBody PlaceEntity placeEntity, HttpServletRequest httpServletRequest) {
         List<PlaceEntity> list = this.placeService.selectPlaceEntityList(placeEntity);
         return list;
     }
 
     /**
      * 查询课程列表
+     *
      * @param courseEntity
      * @return
      */
     @PostMapping("/queryCoures")
-    public List<CourseEntity> queryCoures(@RequestBody CourseEntity courseEntity){
+    public List<CourseEntity> queryCoures(@RequestBody CourseEntity courseEntity) {
         return this.courseService.selectCourseEntityList(courseEntity);
     }
 
     /**
      * 查询教练列表
+     *
      * @param coachEntity
      * @return
      */
     @PostMapping("/queryCoach")
-    public List<CoachEntity> queryCoach(@RequestBody CoachEntity coachEntity){
+    public List<CoachEntity> queryCoach(@RequestBody CoachEntity coachEntity) {
         return this.coachService.selectCoachEntityList(coachEntity);
     }
 
     /**
      * 新增缴费记录
+     *
      * @param
      * @return
      */
     @PostMapping("/addTuition/{studentId}/{money}/{orderNo}")
-    public int addTuition(@PathVariable String studentId,@PathVariable String money,@PathVariable String orderNo){
+    public int addTuition(@PathVariable String studentId, @PathVariable String money, @PathVariable String orderNo) {
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd");
         String desc = "";
@@ -415,30 +449,30 @@ public class MiniAppController extends BaseController {
 
         try {
             StudentEntity studentEntity = this.studentService.selectStudentEntityById(Integer.parseInt(studentId));
-            if(studentEntity.getUnitPrice()!=null && !studentEntity.getUnitPrice().equals("")){
-                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(money)));
-                desc = "冲"+money+",不送,单节课"+studentEntity.getUnitPrice()+"元";
-            }else{
-                if(money.equals("1000")){
-                    newMoney="1100";
+            if (studentEntity.getUnitPrice() != null && !studentEntity.getUnitPrice().equals("")) {
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) + Integer.parseInt(money)));
+                desc = "冲" + money + ",不送,单节课" + studentEntity.getUnitPrice() + "元";
+            } else {
+                if (money.equals("1000")) {
+                    newMoney = "1100";
                     desc = "冲1000送100";
-                }else if(money.equals("3000")){
-                    newMoney="3500";
+                } else if (money.equals("3000")) {
+                    newMoney = "3500";
                     desc = "冲3000送500";
-                }else if(money.equals("5000")){
-                    newMoney="6000";
+                } else if (money.equals("5000")) {
+                    newMoney = "6000";
                     desc = "冲5000送1000";
-                }else if(money.equals("7000")){
-                    newMoney="9500";
+                } else if (money.equals("7000")) {
+                    newMoney = "9500";
                     desc = "冲7000送2500";
-                }else if(money.equals("9000")){
-                    newMoney="13000";
+                } else if (money.equals("9000")) {
+                    newMoney = "13000";
                     desc = "冲9000送4000";
-                }else{
+                } else {
                     newMoney = money;
-                    desc = "自定义金额，冲"+money+"元,不送";
+                    desc = "自定义金额，冲" + money + "元,不送";
                 }
-                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(newMoney)));
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) + Integer.parseInt(newMoney)));
             }
 
             this.studentService.updateStudentEntity(studentEntity);
@@ -451,7 +485,7 @@ public class MiniAppController extends BaseController {
             tuitionEntity.setOrderno(Integer.parseInt(orderNo));
             this.tuitionService.insertTuitionEntity(tuitionEntity);
             return 1;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -459,11 +493,12 @@ public class MiniAppController extends BaseController {
 
     /**
      * 新增缴费记录(根据手机号)
+     *
      * @param
      * @return
      */
     @PostMapping("/addTuitionByPhone/{mobilePhone}/{money}/{orderNo}")
-    public int addTuitionByPhone(@PathVariable String mobilePhone,@PathVariable String money,@PathVariable String orderNo){
+    public int addTuitionByPhone(@PathVariable String mobilePhone, @PathVariable String money, @PathVariable String orderNo) {
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd");
         String desc = "";
@@ -472,30 +507,30 @@ public class MiniAppController extends BaseController {
         try {
             StudentEntity studentEntity = this.studentService.findStudentByPhone(mobilePhone).get(0);
             int yuanmoney = queryBalanceByPhone(studentEntity.getParentTel());
-            if(studentEntity.getUnitPrice()!=null && !studentEntity.getUnitPrice().equals("")){
-                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(money)));
-                desc = "冲"+money+",不送,单节课"+studentEntity.getUnitPrice()+"元";
-            }else{
-                if(money.equals("1000")){
-                    newMoney="1100";
+            if (studentEntity.getUnitPrice() != null && !studentEntity.getUnitPrice().equals("")) {
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) + Integer.parseInt(money)));
+                desc = "冲" + money + ",不送,单节课" + studentEntity.getUnitPrice() + "元";
+            } else {
+                if (money.equals("1000")) {
+                    newMoney = "1100";
                     desc = "冲1000送100";
-                }else if(money.equals("3000")){
-                    newMoney="3500";
+                } else if (money.equals("3000")) {
+                    newMoney = "3500";
                     desc = "冲3000送500";
-                }else if(money.equals("5000")){
-                    newMoney="6000";
+                } else if (money.equals("5000")) {
+                    newMoney = "6000";
                     desc = "冲5000送1000";
-                }else if(money.equals("7000")){
-                    newMoney="9500";
+                } else if (money.equals("7000")) {
+                    newMoney = "9500";
                     desc = "冲7000送2500";
-                }else if(money.equals("9000")){
-                    newMoney="13000";
+                } else if (money.equals("9000")) {
+                    newMoney = "13000";
                     desc = "冲9000送4000";
-                }else{
+                } else {
                     newMoney = money;
-                    desc = "自定义金额，冲"+money+"元,不送";
+                    desc = "自定义金额，冲" + money + "元,不送";
                 }
-                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney())+Integer.parseInt(newMoney)));
+                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) + Integer.parseInt(newMoney)));
             }
 
             this.studentService.updateStudentEntity(studentEntity);
@@ -508,9 +543,9 @@ public class MiniAppController extends BaseController {
             tuitionEntity.setOrderno(Integer.parseInt(orderNo));
             this.tuitionService.insertTuitionEntity(tuitionEntity);
 
-            sendTuitionSucMsg(studentEntity,money,String.valueOf(yuanmoney),studentEntity.getMoney());
+            sendTuitionSucMsg(studentEntity, money, String.valueOf(yuanmoney), studentEntity.getMoney());
             return 1;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -519,11 +554,12 @@ public class MiniAppController extends BaseController {
 
     /**
      * 学员报名
+     *
      * @param signUpEntity
      * @return
      */
     @PostMapping("/addSignUp")
-    public int addSignUp(@RequestBody SignUpEntity signUpEntity){
+    public int addSignUp(@RequestBody SignUpEntity signUpEntity) {
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
         try {
@@ -537,7 +573,7 @@ public class MiniAppController extends BaseController {
             this.studentService.insertStudentEntity(studentEntity);
             this.signUpEntityService.insertSignUpEntity(signUpEntity);
             return 1;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -545,25 +581,27 @@ public class MiniAppController extends BaseController {
 
     /**
      * 查询所有商品
+     *
      * @param storageEntity
      * @return
      */
     @PostMapping("/findAllStorages")
-    public List<StorageEntity> findAllStorages(@RequestBody StorageEntity storageEntity){
+    public List<StorageEntity> findAllStorages(@RequestBody StorageEntity storageEntity) {
         return this.storageService.selectStorageEntityListNew(storageEntity);
     }
 
     /**
      * 查询首页菜单权限
+     *
      * @param
      * @return
      */
     @PostMapping("/findAllBtnMenuByTel/{tel}")
-    public List<BtnMenuEntity> findAllBtnMenu(@PathVariable String tel){
+    public List<BtnMenuEntity> findAllBtnMenu(@PathVariable String tel) {
         List<CoachEntity> coachEntityList = this.coachService.findCoachByPhone(tel);
-        String type="0";//普通用户
-        if(coachEntityList.size()>0){
-            type="1";
+        String type = "0";//普通用户
+        if (coachEntityList.size() > 0) {
+            type = "1";
         }
         BtnMenuEntity btnMenuEntity = new BtnMenuEntity();
         btnMenuEntity.setMenuRole(type);
@@ -575,19 +613,20 @@ public class MiniAppController extends BaseController {
 
     /**
      * 商品出库
+     *
      * @param id
      * @param count
      * @return
      */
     @PostMapping("/outStorage/{id}/{count}/{tel}/{orderNo}")
-    public AjaxResult outStorage(@PathVariable Integer id,@PathVariable String count,@PathVariable String tel,@PathVariable Integer orderNo){
+    public AjaxResult outStorage(@PathVariable Integer id, @PathVariable String count, @PathVariable String tel, @PathVariable Integer orderNo) {
         BigDecimal count2 = new BigDecimal(count);
         Date date = DateUtil.date();
         String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
         try {
             StorageEntity storageEntity = this.storageService.selectStorageEntityById(id);
-            if(storageEntity.getInventory()>=Integer.parseInt(count)){
-                storageEntity.setInventory(storageEntity.getInventory()-Integer.parseInt(count));
+            if (storageEntity.getInventory() >= Integer.parseInt(count)) {
+                storageEntity.setInventory(storageEntity.getInventory() - Integer.parseInt(count));
                 storageService.updateStorageEntity(storageEntity);
                 PurchaseDetailEntity purchaseDetailEntity = new PurchaseDetailEntity();
                 purchaseDetailEntity.setBuyCount(count);
@@ -598,10 +637,10 @@ public class MiniAppController extends BaseController {
                 purchaseDetailEntity.setOrderno(orderNo);
                 purchaseDetailEntityService.insertPurchaseDetailEntity(purchaseDetailEntity);
                 return toAjax(1);
-            }else{
+            } else {
                 return AjaxResult.error("库存不足！");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return toAjax(0);
         }
     }
@@ -614,35 +653,34 @@ public class MiniAppController extends BaseController {
      * @return 参数键值
      */
     @PostMapping("/getDictType/{dictType}")
-    public List<SysDictData> getDictType(@PathVariable String dictType)
-    {
+    public List<SysDictData> getDictType(@PathVariable String dictType) {
         return dictTypeService.selectDictDataByType(dictType);
     }
 
     /**
      * 根据字典类型和字典键值查询字典数据信息
      *
-     * @param dictType 字典类型
+     * @param dictType  字典类型
      * @param dictValue 字典键值
      * @return 字典标签
      */
     @PostMapping("/getDictLabel/{dictType}/{dictValue}")
-    public String getDictLabel(@PathVariable String dictType, @PathVariable String dictValue)
-    {
+    public String getDictLabel(@PathVariable String dictType, @PathVariable String dictValue) {
         return dictDataService.selectDictLabel(dictType, dictValue);
     }
 
     /**
      * 根据手机号查询余额
+     *
      * @param phone
      * @return
      */
     @PostMapping("/queryBalanceByPhone/{phone}")
-    public int queryBalanceByPhone(@PathVariable String phone){
+    public int queryBalanceByPhone(@PathVariable String phone) {
         List<StudentEntity> list = this.studentService.findStudentByPhone(phone);
         int money = 0;
-        for (StudentEntity studentEntity: list) {
-            money = money+Integer.parseInt(studentEntity.getMoney());
+        for (StudentEntity studentEntity : list) {
+            money = money + Integer.parseInt(studentEntity.getMoney());
         }
         return money;
     }
@@ -650,9 +688,10 @@ public class MiniAppController extends BaseController {
 
     /**
      * 余额变动通知
+     *
      * @param
      */
-    public void sendYuEMsg(StudentSignEntity studentSignEntity,String tel){
+    public void sendYuEMsg(StudentSignEntity studentSignEntity, String tel) {
         StudentEntity studentEntity = this.studentService.selectStudentEntityById(studentSignEntity.getStudentId());
 
         int allMoney = queryBalanceByPhone(tel);
@@ -669,7 +708,7 @@ public class MiniAppController extends BaseController {
              * 非必要请不要修改该字段 */
             clientProfile.setSignMethod("HmacSHA256");
             clientProfile.setHttpProfile(httpProfile);
-            SmsClient client = new SmsClient(cred, "ap-guangzhou",clientProfile);
+            SmsClient client = new SmsClient(cred, "ap-guangzhou", clientProfile);
             SendSmsRequest req = new SendSmsRequest();
             String appid = "1400510386";
             req.setSmsSdkAppid(appid);
@@ -686,11 +725,11 @@ public class MiniAppController extends BaseController {
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
-            String[] phoneNumbers = {"+86"+studentEntity.getParentTel()};
+            String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
 //            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),studentEntity.getMoney()};
-            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),String.valueOf(allMoney)};
+            String[] templateParams = {studentEntity.getName(), format, String.valueOf(studentSignEntity.getMoney()), String.valueOf(allMoney)};
             req.setTemplateParamSet(templateParams);
             SendSmsResponse res = client.SendSms(req);
             // 输出 JSON 格式的字符串回包
@@ -700,14 +739,14 @@ public class MiniAppController extends BaseController {
 
 
             SendMsgEntity sendMsgEntity = new SendMsgEntity();
-            sendMsgEntity.setContent("您好，您的孩子"+studentEntity.getName()+"于"+format+"签到，本节价格为"
-                    +studentSignEntity.getMoney()+"元，剩余金额为"+allMoney+"元");
+            sendMsgEntity.setContent("您好，您的孩子" + studentEntity.getName() + "于" + format + "签到，本节价格为"
+                    + studentSignEntity.getMoney() + "元，剩余金额为" + allMoney + "元");
             sendMsgEntity.setSendTime(format);
             sendMsgEntity.setSendMobile(studentEntity.getParentTel());
             this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
 
 
-        }catch(TencentCloudSDKException e) {
+        } catch (TencentCloudSDKException e) {
             e.printStackTrace();
         }
     }
@@ -715,9 +754,10 @@ public class MiniAppController extends BaseController {
 
     /**
      * 充值成功通知
+     *
      * @param
      */
-    public void sendTuitionSucMsg(StudentEntity studentEntity,String money,String yuanmoney,String newMoney){
+    public void sendTuitionSucMsg(StudentEntity studentEntity, String money, String yuanmoney, String newMoney) {
         try {
             Date date = DateUtil.date();
             String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
@@ -731,7 +771,7 @@ public class MiniAppController extends BaseController {
              * 非必要请不要修改该字段 */
             clientProfile.setSignMethod("HmacSHA256");
             clientProfile.setHttpProfile(httpProfile);
-            SmsClient client = new SmsClient(cred, "ap-guangzhou",clientProfile);
+            SmsClient client = new SmsClient(cred, "ap-guangzhou", clientProfile);
             SendSmsRequest req = new SendSmsRequest();
             String appid = "1400510386";
             req.setSmsSdkAppid(appid);
@@ -748,10 +788,10 @@ public class MiniAppController extends BaseController {
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
-            String[] phoneNumbers = {"+86"+studentEntity.getParentTel()};
+            String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
-            String[] templateParams = {format,money,yuanmoney,newMoney};
+            String[] templateParams = {format, money, yuanmoney, newMoney};
             req.setTemplateParamSet(templateParams);
             SendSmsResponse res = client.SendSms(req);
             // 输出 JSON 格式的字符串回包
@@ -761,12 +801,12 @@ public class MiniAppController extends BaseController {
 
 
             SendMsgEntity sendMsgEntity = new SendMsgEntity();
-            sendMsgEntity.setContent("尊敬的客户，您好，您于"+format+"成功充值"+money+"元，充值前账户余额为"+yuanmoney+"元，充值后账户余额为"+newMoney+"元，感谢您对我们的信赖");
+            sendMsgEntity.setContent("尊敬的客户，您好，您于" + format + "成功充值" + money + "元，充值前账户余额为" + yuanmoney + "元，充值后账户余额为" + newMoney + "元，感谢您对我们的信赖");
             sendMsgEntity.setSendTime(format);
             sendMsgEntity.setSendMobile(studentEntity.getParentTel());
             this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
 
-        }catch(TencentCloudSDKException e) {
+        } catch (TencentCloudSDKException e) {
             e.printStackTrace();
         }
     }

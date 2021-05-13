@@ -10,6 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="money"    column="money"    />
         <result property="name"    column="name"    />
         <result property="placeId"    column="place_id"    />
+        <result property="placeName"    column="place_name"    />
     </resultMap>
 
     <sql id="selectCourseEntityVo">
@@ -17,10 +18,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectCourseEntityList" parameterType="CourseEntity" resultMap="CourseEntityResult">
-        <include refid="selectCourseEntityVo"/>
+        select a.*,b.name place_name from tt_course a left join tt_place b on a.place_id = b.id
         <where>  
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="placeId != null "> and place_id = #{placeId}</if>
+            <if test="name != null  and name != ''"> and a.name like concat('%', #{name}, '%')</if>
+            <if test="placeId != null "> and a.place_id = #{placeId}</if>
         </where>
     </select>
     

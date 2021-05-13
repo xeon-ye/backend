@@ -20,7 +20,7 @@ public class CourseEntity extends BaseEntity
 
     /** 课时数 */
     @Excel(name = "课时数")
-    private Integer classHours;
+    private String classHours;
 
     /** 单节价格 */
     @Excel(name = "单节价格")
@@ -33,6 +33,7 @@ public class CourseEntity extends BaseEntity
     /** 场地名 */
     @Excel(name = "场地名")
     private Integer placeId;
+    private String placeName;
 
     public void setId(Integer id) 
     {
@@ -43,16 +44,16 @@ public class CourseEntity extends BaseEntity
     {
         return id;
     }
-    public void setClassHours(Integer classHours) 
-    {
+
+    public String getClassHours() {
+        return classHours;
+    }
+
+    public void setClassHours(String classHours) {
         this.classHours = classHours;
     }
 
-    public Integer getClassHours() 
-    {
-        return classHours;
-    }
-    public void setMoney(String money) 
+    public void setMoney(String money)
     {
         this.money = money;
     }
@@ -78,6 +79,14 @@ public class CourseEntity extends BaseEntity
     public Integer getPlaceId() 
     {
         return placeId;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 
     @Override
