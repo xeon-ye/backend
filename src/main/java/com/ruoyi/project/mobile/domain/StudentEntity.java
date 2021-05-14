@@ -74,6 +74,9 @@ public class StudentEntity extends BaseEntity
     @Excel(name = "单节价格")
     private String unitPrice;
 
+    //缴费方式(1 充值  2买课)
+    private Integer chargeType;
+
     public void setId(Integer id) 
     {
         this.id = id;
@@ -208,6 +211,14 @@ public class StudentEntity extends BaseEntity
     public String getUnitPrice() 
     {
         return unitPrice;
+    }
+
+    public Integer getChargeType() {
+        return chargeType;
+    }
+
+    public void setChargeType(Integer chargeType) {
+        this.chargeType = chargeType;
     }
 
     @Override
