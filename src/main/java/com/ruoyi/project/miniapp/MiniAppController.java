@@ -482,7 +482,7 @@ public class MiniAppController extends BaseController {
             tuitionEntity.setStudentId(Integer.parseInt(studentId));
             tuitionEntity.setPayTime(format);
             tuitionEntity.setDescription(desc);
-            tuitionEntity.setOrderno(Integer.parseInt(orderNo));
+            tuitionEntity.setOrderno(orderNo);
             this.tuitionService.insertTuitionEntity(tuitionEntity);
             return 1;
         } catch (Exception e) {
@@ -513,19 +513,19 @@ public class MiniAppController extends BaseController {
             } else {
                 if (money.equals("1000")) {
                     newMoney = "1100";
-                    desc = "冲1000送100";
+                    desc = "充1000送100";
                 } else if (money.equals("3000")) {
                     newMoney = "3500";
-                    desc = "冲3000送500";
+                    desc = "充3000送500";
                 } else if (money.equals("5000")) {
                     newMoney = "6000";
-                    desc = "冲5000送1000";
+                    desc = "充5000送1000";
                 } else if (money.equals("7000")) {
-                    newMoney = "9500";
-                    desc = "冲7000送2500";
+                    newMoney = "9000";
+                    desc = "充7000送2000";
                 } else if (money.equals("9000")) {
-                    newMoney = "13000";
-                    desc = "冲9000送4000";
+                    newMoney = "12000";
+                    desc = "充9000送3000";
                 } else {
                     newMoney = money;
                     desc = "自定义金额，冲" + money + "元,不送";
@@ -540,7 +540,7 @@ public class MiniAppController extends BaseController {
             tuitionEntity.setStudentId(studentEntity.getId());
             tuitionEntity.setPayTime(format);
             tuitionEntity.setDescription(desc);
-            tuitionEntity.setOrderno(Integer.parseInt(orderNo));
+            tuitionEntity.setOrderno(orderNo);
             this.tuitionService.insertTuitionEntity(tuitionEntity);
 
             sendTuitionSucMsg(studentEntity, money, String.valueOf(yuanmoney), studentEntity.getMoney());
@@ -759,6 +759,7 @@ public class MiniAppController extends BaseController {
      */
     public void sendTuitionSucMsg(StudentEntity studentEntity, String money, String yuanmoney, String newMoney) {
         try {
+            int allMoney = queryBalanceByPhone(studentEntity.getParentTel());
             Date date = DateUtil.date();
             String format = DateUtil.format(date, "yyyy-MM-dd HH:mm:ss");
             Credential cred = new Credential("AKID2SdZGi9rYzqSpvhOybkeHfmcJl47lRiF", "R8ZjdJkwSt87WltukJdq1wb6SdaFi0xe");
@@ -791,7 +792,7 @@ public class MiniAppController extends BaseController {
             String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
-            String[] templateParams = {format, money, yuanmoney, newMoney};
+            String[] templateParams = {format, money, yuanmoney, String.valueOf(allMoney)};
             req.setTemplateParamSet(templateParams);
             SendSmsResponse res = client.SendSms(req);
             // 输出 JSON 格式的字符串回包
@@ -801,7 +802,7 @@ public class MiniAppController extends BaseController {
 
 
             SendMsgEntity sendMsgEntity = new SendMsgEntity();
-            sendMsgEntity.setContent("尊敬的客户，您好，您于" + format + "成功充值" + money + "元，充值前账户余额为" + yuanmoney + "元，充值后账户余额为" + newMoney + "元，感谢您对我们的信赖");
+            sendMsgEntity.setContent("尊敬的客户，您好，您于" + format + "成功充值" + money + "元，充值前账户余额为" + yuanmoney + "元，充值后账户余额为" + allMoney + "元，感谢您对我们的信赖");
             sendMsgEntity.setSendTime(format);
             sendMsgEntity.setSendMobile(studentEntity.getParentTel());
             this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
