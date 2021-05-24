@@ -118,4 +118,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="queryTodayIncome" parameterType="String" resultType="java.lang.Integer">
+        select sum(money) income from tt_student_sign where sign_time BETWEEN #{startDate} and #{endDate}
+    </select>
+
 </mapper>

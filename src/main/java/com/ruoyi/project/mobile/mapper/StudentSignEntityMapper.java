@@ -81,4 +81,10 @@ public interface StudentSignEntityMapper
      * @return 结果
      */
     public int deleteStudentSignEntityByIds(Integer[] ids);
+
+    /**
+     * 查询今日营业额
+     * @return
+     */
+    public Integer queryTodayIncome(String startDate,String endDate);
 }

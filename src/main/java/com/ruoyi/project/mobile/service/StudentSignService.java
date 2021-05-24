@@ -81,4 +81,10 @@ public interface StudentSignService
      * @return 结果
      */
     public int deleteStudentSignEntityById(Integer id);
+
+    /**
+     * 查询今日营业额
+     * @return
+     */
+    public Integer queryTodayIncome();
 }

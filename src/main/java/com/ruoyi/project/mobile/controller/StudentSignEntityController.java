@@ -1,6 +1,8 @@
 package com.ruoyi.project.mobile.controller;
 
 import java.util.List;
+
+import com.ruoyi.project.mobile.domain.StudentEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,5 +101,15 @@ public class StudentSignEntityController extends BaseController
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
         return toAjax(studentSignEntityService.deleteStudentSignEntityByIds(ids));
+    }
+
+    /**
+     * 查询今日营业额
+     * @return
+     */
+    @GetMapping("/queryTodayIncome")
+    public Integer queryTodayIncome()
+    {
+        return this.studentSignEntityService.queryTodayIncome();
     }
 }

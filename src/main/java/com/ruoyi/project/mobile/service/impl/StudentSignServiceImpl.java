@@ -1,5 +1,7 @@
 package com.ruoyi.project.mobile.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,5 +108,20 @@ public class StudentSignServiceImpl implements StudentSignService
     public int deleteStudentSignEntityById(Integer id)
     {
         return studentSignEntityMapper.deleteStudentSignEntityById(id);
+    }
+
+    @Override
+    public Integer queryTodayIncome() {
+        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
+        sdf.applyPattern("yyyy-MM-dd");// a为am/pm的标记
+        Date date = new Date();// 获取当前时间
+        String startDate = sdf.format(date)+" 00:00:00";
+        String endDate = sdf.format(date)+" 23:59:59";
+        Integer re = studentSignEntityMapper.queryTodayIncome(startDate,endDate);
+        if(re==null){
+           return 0;
+        }else{
+           return re;
+        }
     }
 }
