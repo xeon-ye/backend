@@ -87,4 +87,12 @@ public interface StudentSignEntityMapper
      * @return
      */
     public Integer queryTodayIncome(String startDate,String endDate);
+
+    /**
+     * 查询本月营业额
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public String queryMonthIncome(String startDate,String endDate);
 }

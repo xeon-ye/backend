@@ -112,4 +112,13 @@ public class StudentSignEntityController extends BaseController
     {
         return this.studentSignEntityService.queryTodayIncome();
     }
+    /**
+     * 查询本月营业额
+     * @return
+     */
+    @GetMapping("/queryMonthIncome")
+    public String queryMonthIncome()
+    {
+        return this.studentSignEntityService.queryMonthIncome();
+    }
 }

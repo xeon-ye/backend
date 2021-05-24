@@ -1,6 +1,7 @@
 package com.ruoyi.project.mobile.service.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +123,26 @@ public class StudentSignServiceImpl implements StudentSignService
            return 0;
         }else{
            return re;
+        }
+    }
+
+    @Override
+    public String queryMonthIncome() {
+        //计算本月第一天
+        Calendar firstDay=Calendar.getInstance();//获取当前时间
+        firstDay.set(Calendar.DAY_OF_MONTH, 1);//日期设置为一号，就是第一天了
+        String startDate = new SimpleDateFormat("yyyy-MM-dd").format(firstDay.getTime());
+        //计算本月最后一天
+        Calendar lastDay=Calendar.getInstance();//获取当前时间
+        lastDay.add(Calendar.MONTH, 1);//月份设置为下个月
+        lastDay.set(Calendar.DAY_OF_MONTH,1);//日期设置为1号
+        lastDay.add(Calendar.DAY_OF_MONTH, -1);//倒回到前一天
+        String endDate = new SimpleDateFormat("yyyy-MM-dd").format(lastDay.getTime());
+        String re = studentSignEntityMapper.queryMonthIncome(startDate,endDate);
+        if(re==null){
+            return "0";
+        }else{
+            return re;
         }
     }
 }

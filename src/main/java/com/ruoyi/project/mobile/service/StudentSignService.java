@@ -87,4 +87,10 @@ public interface StudentSignService
      * @return
      */
     public Integer queryTodayIncome();
+
+    /**
+     * 查询本月营业额
+     * @return
+     */
+    public String queryMonthIncome();
 }
