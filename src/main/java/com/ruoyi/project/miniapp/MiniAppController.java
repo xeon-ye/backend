@@ -580,6 +580,21 @@ public class MiniAppController extends BaseController {
     }
 
     /**
+     * 手机号查询学员是否存在
+     * @param
+     * @return
+     */
+    @PostMapping("/findStudentByTel/{tel}")
+    public int findStudentByTel(@PathVariable String tel) {
+        List<StudentEntity> list = this.studentService.findStudentByPhone(tel);
+        if(list.size()>0){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
+    /**
      * 查询所有商品
      *
      * @param storageEntity
@@ -598,11 +613,19 @@ public class MiniAppController extends BaseController {
      */
     @PostMapping("/findAllBtnMenuByTel/{tel}")
     public List<BtnMenuEntity> findAllBtnMenu(@PathVariable String tel) {
+        String type;
+
         List<CoachEntity> coachEntityList = this.coachService.findCoachByPhone(tel);
-        String type = "0";//普通用户
+        List<StudentEntity> studentEntityList = this.studentService.findStudentByPhone(tel);
+
         if (coachEntityList.size() > 0) {
-            type = "1";
+            type = "1";//教练
+        }else if(studentEntityList.size()>0){
+            type= "0";//学员
+        }else{
+            type="2";//游客
         }
+
         BtnMenuEntity btnMenuEntity = new BtnMenuEntity();
         btnMenuEntity.setMenuRole(type);
         btnMenuEntity.setUseFlag("1");
@@ -725,7 +748,7 @@ public class MiniAppController extends BaseController {
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
-            String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
+            String[] phoneNumbers = {"+86" + studentEntity.getParentTel(),"+8613311085109","+8617805421508"};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
 //            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),studentEntity.getMoney()};
