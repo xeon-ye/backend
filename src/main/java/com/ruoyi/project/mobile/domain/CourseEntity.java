@@ -29,6 +29,7 @@ public class CourseEntity extends BaseEntity
     /** 课程名 */
     @Excel(name = "课程名")
     private String name;
+    private Integer type;
 
     /** 场地名 */
     @Excel(name = "场地名")
@@ -87,6 +88,14 @@ public class CourseEntity extends BaseEntity
 
     public void setPlaceName(String placeName) {
         this.placeName = placeName;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     @Override

@@ -108,9 +108,18 @@ public class StudentSignEntityController extends BaseController
      * @return
      */
     @GetMapping("/queryTodayIncome")
-    public Integer queryTodayIncome()
+    public String queryTodayIncome()
     {
         return this.studentSignEntityService.queryTodayIncome();
+    }
+    /**
+     * 查询昨日营业额
+     * @return
+     */
+    @GetMapping("/queryLastDayIncome")
+    public String queryLastDayIncome()
+    {
+        return this.studentSignEntityService.queryLastDayIncome();
     }
     /**
      * 查询本月营业额
@@ -120,5 +129,15 @@ public class StudentSignEntityController extends BaseController
     public String queryMonthIncome()
     {
         return this.studentSignEntityService.queryMonthIncome();
+    }
+
+    /**
+     * 查询本月营业额
+     * @return
+     */
+    @GetMapping("/queryLastMonthIncome")
+    public String queryLastMonthIncome()
+    {
+        return this.studentSignEntityService.queryLastMonthIncome();
     }
 }

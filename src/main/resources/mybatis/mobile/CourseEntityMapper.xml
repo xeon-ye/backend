@@ -9,12 +9,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="classHours"    column="class_hours"    />
         <result property="money"    column="money"    />
         <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
         <result property="placeId"    column="place_id"    />
         <result property="placeName"    column="place_name"    />
     </resultMap>
 
     <sql id="selectCourseEntityVo">
-        select id, class_hours, money, name, place_id from tt_course
+        select id, class_hours, money, name, place_id,type from tt_course
     </sql>
 
     <select id="selectCourseEntityList" parameterType="CourseEntity" resultMap="CourseEntityResult">
@@ -22,6 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="name != null  and name != ''"> and a.name like concat('%', #{name}, '%')</if>
             <if test="placeId != null "> and a.place_id = #{placeId}</if>
+            <if test="type != null "> and a.type = #{type}</if>
         </where>
     </select>
     

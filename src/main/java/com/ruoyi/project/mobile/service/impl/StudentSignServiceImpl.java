@@ -112,17 +112,32 @@ public class StudentSignServiceImpl implements StudentSignService
     }
 
     @Override
-    public Integer queryTodayIncome() {
+    public String queryTodayIncome() {
         SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
         sdf.applyPattern("yyyy-MM-dd");// a为am/pm的标记
         Date date = new Date();// 获取当前时间
         String startDate = sdf.format(date)+" 00:00:00";
         String endDate = sdf.format(date)+" 23:59:59";
-        Integer re = studentSignEntityMapper.queryTodayIncome(startDate,endDate);
+        String re = studentSignEntityMapper.queryIncomeByDate(startDate,endDate);
         if(re==null){
-           return 0;
+            return "0";
         }else{
            return re;
+        }
+    }
+
+    @Override
+    public String queryLastDayIncome() {
+        Calendar lastday=Calendar.getInstance();//获取当前时间
+        lastday.add(Calendar.DATE,-1);
+
+        String startDate= new SimpleDateFormat("yyyy-MM-dd").format(lastday.getTime())+" 00:00:00";
+        String endDate= new SimpleDateFormat("yyyy-MM-dd").format(lastday.getTime())+" 23:59:59";
+        String re = studentSignEntityMapper.queryIncomeByDate(startDate,endDate);
+        if(re==null){
+            return "0";
+        }else{
+            return re;
         }
     }
 
@@ -131,18 +146,39 @@ public class StudentSignServiceImpl implements StudentSignService
         //计算本月第一天
         Calendar firstDay=Calendar.getInstance();//获取当前时间
         firstDay.set(Calendar.DAY_OF_MONTH, 1);//日期设置为一号，就是第一天了
-        String startDate = new SimpleDateFormat("yyyy-MM-dd").format(firstDay.getTime());
+        String startDate = new SimpleDateFormat("yyyy-MM-dd").format(firstDay.getTime())+" 00:00:00";
         //计算本月最后一天
         Calendar lastDay=Calendar.getInstance();//获取当前时间
         lastDay.add(Calendar.MONTH, 1);//月份设置为下个月
         lastDay.set(Calendar.DAY_OF_MONTH,1);//日期设置为1号
         lastDay.add(Calendar.DAY_OF_MONTH, -1);//倒回到前一天
-        String endDate = new SimpleDateFormat("yyyy-MM-dd").format(lastDay.getTime());
-        String re = studentSignEntityMapper.queryMonthIncome(startDate,endDate);
+        String endDate = new SimpleDateFormat("yyyy-MM-dd").format(lastDay.getTime())+" 23:59:59";
+        String re = studentSignEntityMapper.queryIncomeByDate(startDate,endDate);
         if(re==null){
             return "0";
         }else{
             return re;
         }
+    }
+
+    @Override
+    public String queryLastMonthIncome() {
+        //获取前月的第一天
+        Calendar   cal_1=Calendar.getInstance();//获取当前日期
+        cal_1.add(Calendar.MONTH, -1);
+        cal_1.set(Calendar.DAY_OF_MONTH,1);//设置为1号,当前日期既为本月第一天
+        String firstDay = new SimpleDateFormat("yyyy-MM-dd").format((cal_1.getTime()))+" 00:00:00";
+
+        //获取前月的最后一天
+        Calendar cale = Calendar.getInstance();
+        cale.set(Calendar.DAY_OF_MONTH,0);//设置为1号,当前日期既为本月第一天
+        String lastDay = new SimpleDateFormat("yyyy-MM-dd").format((cale.getTime()))+" 23:59:59";
+        String re = studentSignEntityMapper.queryIncomeByDate(firstDay,lastDay);
+        if(re==null){
+            return "0";
+        }else{
+            return re;
+        }
+
     }
 }

@@ -360,8 +360,22 @@ public class MiniAppController extends BaseController {
             CourseEntity courseEntity = this.courseService.selectCourseEntityById(studentSignEntity.getCourseId());
             StudentEntity studentEntity = this.studentService.selectStudentEntityById(studentSignEntity.getStudentId());
 
-            //如果单价不为空,并且是单陪课
-            if (studentEntity.getUnitPrice() != null && !studentEntity.getUnitPrice().equals("") && courseEntity.getId()!=1) {
+//            //如果单价不为空,并且是单陪课
+//            if (studentEntity.getUnitPrice() != null && !studentEntity.getUnitPrice().equals("") && courseEntity.getId()!=1) {
+//                if(courseEntity.getClassHours().equals("1")){
+//                    studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(studentEntity.getUnitPrice())));
+//                    studentSignEntity.setMoney(studentEntity.getUnitPrice());//存入本节课价格
+//                }else{
+//                    String realMoney = Double.toString(Math.floor(Float.parseFloat(studentEntity.getUnitPrice())*Float.parseFloat(courseEntity.getClassHours())));
+//                    studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(subZeroAndDot(realMoney))));
+//                    studentSignEntity.setMoney(subZeroAndDot(realMoney));//存入本节课价格
+//                }
+//
+//            } else {
+//                studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(courseEntity.getMoney())));
+//                studentSignEntity.setMoney(courseEntity.getMoney());//存入本节课价格
+//            }
+            if(studentEntity.getId()==109 && courseEntity.getId()!=1 && courseEntity.getId()!=13){
                 if(courseEntity.getClassHours().equals("1")){
                     studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(studentEntity.getUnitPrice())));
                     studentSignEntity.setMoney(studentEntity.getUnitPrice());//存入本节课价格
@@ -370,8 +384,7 @@ public class MiniAppController extends BaseController {
                     studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(subZeroAndDot(realMoney))));
                     studentSignEntity.setMoney(subZeroAndDot(realMoney));//存入本节课价格
                 }
-
-            } else {
+            }else{
                 studentEntity.setMoney(String.valueOf(Integer.parseInt(studentEntity.getMoney()) - Integer.parseInt(courseEntity.getMoney())));
                 studentSignEntity.setMoney(courseEntity.getMoney());//存入本节课价格
             }
@@ -420,6 +433,17 @@ public class MiniAppController extends BaseController {
      */
     @PostMapping("/queryCoures")
     public List<CourseEntity> queryCoures(@RequestBody CourseEntity courseEntity) {
+        return this.courseService.selectCourseEntityList(courseEntity);
+    }
+
+    /**
+     * 根据学员查询课程
+     *
+     * @param courseEntity
+     * @return
+     */
+    @PostMapping("/queryCouresByStuId")
+    public List<CourseEntity> queryCouresByStuId(@RequestBody CourseEntity courseEntity) {
         return this.courseService.selectCourseEntityList(courseEntity);
     }
 
@@ -570,6 +594,7 @@ public class MiniAppController extends BaseController {
             studentEntity.setPlaceId("1");
             studentEntity.setRegistrTime(format);
             studentEntity.setMoney("0");
+            studentEntity.setChargeType(2);
             this.studentService.insertStudentEntity(studentEntity);
             this.signUpEntityService.insertSignUpEntity(signUpEntity);
             return 1;

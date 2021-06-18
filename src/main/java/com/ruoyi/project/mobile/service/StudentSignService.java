@@ -86,11 +86,23 @@ public interface StudentSignService
      * 查询今日营业额
      * @return
      */
-    public Integer queryTodayIncome();
+    public String queryTodayIncome();
+
+    /**
+     * 查询昨日营业额
+     * @return
+     */
+    public String queryLastDayIncome();
 
     /**
      * 查询本月营业额
      * @return
      */
     public String queryMonthIncome();
+
+    /**
+     * 查询上月营业额
+     * @return
+     */
+    public String queryLastMonthIncome();
 }
