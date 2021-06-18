@@ -808,14 +808,14 @@ public class MiniAppController extends BaseController {
             /* 用户的 session 内容: 可以携带用户侧 ID 等上下文信息，server 会原样返回 */
             /* 短信码号扩展号: 默认未开通，如需开通请联系 [sms helper] */
             /* 模板 ID: 必须填写已审核通过的模板 ID，可登录 [短信控制台] 查看模板 ID */
-            String templateID = "933073";
+            String templateID = "1002619";
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
             String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
-            String[] templateParams = {format, money, yuanmoney, String.valueOf(allMoney)};
+            String[] templateParams = {studentEntity.getName(),format, money, yuanmoney, String.valueOf(allMoney)};
             req.setTemplateParamSet(templateParams);
             SendSmsResponse res = client.SendSms(req);
             // 输出 JSON 格式的字符串回包
@@ -825,7 +825,7 @@ public class MiniAppController extends BaseController {
 
 
             SendMsgEntity sendMsgEntity = new SendMsgEntity();
-            sendMsgEntity.setContent("尊敬的客户，您好，您于" + format + "成功充值" + money + "元，充值前账户余额为" + yuanmoney + "元，充值后账户余额为" + allMoney + "元，感谢您对我们的信赖");
+            sendMsgEntity.setContent("亲爱的学员:"+studentEntity.getName()+"，您好，您于" + format + "成功充值" + money + "元，充值前账户余额为" + yuanmoney + "元，充值后账户余额为" + allMoney + "元，感谢您对我们的信赖");
             sendMsgEntity.setSendTime(format);
             sendMsgEntity.setSendMobile(studentEntity.getParentTel());
             this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
