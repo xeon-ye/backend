@@ -773,7 +773,7 @@ public class MiniAppController extends BaseController {
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
-            String[] phoneNumbers = {"+86" + studentEntity.getParentTel(),"+8613311085109","+8617805421508"};
+            String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
 //            String[] templateParams = {studentEntity.getName(),format,String.valueOf(studentSignEntity.getMoney()),studentEntity.getMoney()};
@@ -837,7 +837,7 @@ public class MiniAppController extends BaseController {
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
-            String[] phoneNumbers = {"+86" + studentEntity.getParentTel()};
+            String[] phoneNumbers = {"+86" + studentEntity.getParentTel(),"+8613311085109","+8617805421508"};
             req.setPhoneNumberSet(phoneNumbers);
             /* 模板参数: 若无模板参数，则设置为空*/
             String[] templateParams = {studentEntity.getName(),format, money, yuanmoney, String.valueOf(allMoney)};
