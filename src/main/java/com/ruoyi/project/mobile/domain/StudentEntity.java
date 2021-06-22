@@ -77,6 +77,8 @@ public class StudentEntity extends BaseEntity
     //缴费方式(1 充值  2买课)
     private Integer chargeType;
 
+    private String adult;
+
     public void setId(Integer id) 
     {
         this.id = id;
@@ -219,6 +221,14 @@ public class StudentEntity extends BaseEntity
 
     public void setChargeType(Integer chargeType) {
         this.chargeType = chargeType;
+    }
+
+    public String getAdult() {
+        return adult;
+    }
+
+    public void setAdult(String adult) {
+        this.adult = adult;
     }
 
     @Override

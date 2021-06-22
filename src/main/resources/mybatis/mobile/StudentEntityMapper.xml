@@ -21,10 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="saleName"    column="sale_name"    />
         <result property="unitPrice"    column="unit_price"    />
         <result property="chargeType"    column="charge_type"    />
+        <result property="adult"    column="adult"    />
     </resultMap>
 
     <sql id="selectStudentEntityVo">
-        select id, address, age, class_hours, name, parent_name, parent_tel, place_id, registr_time, sn, tel, id_card, money, sale_name, unit_price,charge_type from tt_student
+        select id, address, age, class_hours, name, parent_name, parent_tel, place_id, registr_time, sn, tel, id_card, money, sale_name, unit_price,charge_type,adult from tt_student
     </sql>
 
     <select id="selectStudentEntityList" parameterType="StudentEntity" resultMap="StudentEntityResult">
@@ -36,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tel != null  and tel != ''"> and tel = #{tel}</if>
             <if test="saleName != null  and saleName != ''"> and sale_name like concat('%', #{saleName}, '%')</if>
             <if test="chargeType != null  and chargeType != ''"> and charge_type = #{chargeType}</if>
+            <if test="adult != null  and adult != ''"> and adult = #{adult}</if>
         </where>
     </select>
     
@@ -62,6 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="saleName != null">sale_name,</if>
             <if test="unitPrice != null">unit_price,</if>
             <if test="chargeType != null">charge_type,</if>
+            <if test="adult != null">adult</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="address != null">#{address},</if>
@@ -79,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="saleName != null">#{saleName},</if>
             <if test="unitPrice != null">#{unitPrice},</if>
             <if test="chargeType != null">#{chargeType},</if>
+            <if test="adult != null">#{adult}</if>
          </trim>
     </insert>
 
@@ -100,6 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="saleName != null">sale_name = #{saleName},</if>
             <if test="unitPrice != null">unit_price = #{unitPrice},</if>
             <if test="chargeType != null">charge_type = #{chargeType},</if>
+            <if test="adult != null">adult = #{adult}</if>
         </trim>
         where id = #{id}
     </update>
@@ -142,6 +147,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tel != null  and tel != ''"> and s.tel = #{tel}</if>
             <if test="saleName != null  and saleName != ''"> and s.sale_name like concat('%', #{saleName}, '%')</if>
             <if test="chargeType != null  and chargeType != ''"> and s.charge_type = #{chargeType}</if>
+            <if test="adult != null  and adult != ''"> and s.adult = #{adult}</if>
         </where>
     </select>
 

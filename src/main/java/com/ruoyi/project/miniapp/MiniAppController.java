@@ -769,7 +769,13 @@ public class MiniAppController extends BaseController {
             /* 用户的 session 内容: 可以携带用户侧 ID 等上下文信息，server 会原样返回 */
             /* 短信码号扩展号: 默认未开通，如需开通请联系 [sms helper] */
             /* 模板 ID: 必须填写已审核通过的模板 ID，可登录 [短信控制台] 查看模板 ID */
-            String templateID = "932023";
+            String templateID;
+            if(studentEntity.getAdult().equals("2")){//小孩
+                templateID = "932023";
+            }else{
+                templateID = "1007124";
+            }
+
             req.setTemplateID(templateID);
             /* 下发手机号码，采用 e.164 标准，+[国家或地区码][手机号]
              * 例如+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号*/
@@ -785,13 +791,23 @@ public class MiniAppController extends BaseController {
             // 可以取出单个值，您可以通过官网接口文档或跳转到 response 对象的定义处查看返回字段的定义
             System.out.println(res.getRequestId());
 
+            try {
+                SendMsgEntity sendMsgEntity = new SendMsgEntity();
+                if(studentEntity.getAdult().equals("2")){
+                    sendMsgEntity.setContent("您好，您的孩子" + studentEntity.getName() + "于" + format + "签到，本节价格为"
+                            + studentSignEntity.getMoney() + "元，剩余金额为" + allMoney + "元");
+                }else{
+                    sendMsgEntity.setContent("学员"+studentEntity.getName()+"，您好，您于" + format + "签到，本节价格为"
+                            + studentSignEntity.getMoney() + "元，剩余金额为" + allMoney + "元");
+                }
 
-            SendMsgEntity sendMsgEntity = new SendMsgEntity();
-            sendMsgEntity.setContent("您好，您的孩子" + studentEntity.getName() + "于" + format + "签到，本节价格为"
-                    + studentSignEntity.getMoney() + "元，剩余金额为" + allMoney + "元");
-            sendMsgEntity.setSendTime(format);
-            sendMsgEntity.setSendMobile(studentEntity.getParentTel());
-            this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
+                sendMsgEntity.setSendTime(format);
+                sendMsgEntity.setSendMobile(studentEntity.getParentTel());
+                this.sendMsgEntityService.insertSendMsgEntity(sendMsgEntity);
+            }catch (Exception e){
+                System.out.printf("短信发送失败！！！学员名称："+studentEntity.getName());
+            }
+
 
 
         } catch (TencentCloudSDKException e) {
