@@ -595,6 +595,7 @@ public class MiniAppController extends BaseController {
             studentEntity.setRegistrTime(format);
             studentEntity.setMoney("0");
             studentEntity.setChargeType(2);
+            studentEntity.setAdult("2");//1 成人 2小孩
             this.studentService.insertStudentEntity(studentEntity);
             this.signUpEntityService.insertSignUpEntity(signUpEntity);
             return 1;
