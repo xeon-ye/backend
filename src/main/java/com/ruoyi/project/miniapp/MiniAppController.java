@@ -192,7 +192,13 @@ public class MiniAppController extends BaseController {
     @PostMapping("/findChooseClassRecordByPhone/{phone}/{state}")
     public List<ChooseClassEntity> findChooseClassRecordByPhone(@PathVariable String phone, @PathVariable String state) {
         List<ChooseClassEntity> listAll = new ArrayList<>();
-        listAll = this.chooseClassService.findChooseClassRecordByPhone(phone, state);
+        //查询手机号是否为教练
+        List<CoachEntity> coachEntitys = this.coachService.findCoachByPhone(phone);
+        if (coachEntitys.size() > 0) {
+            listAll = this.chooseClassService.findChooseClassRecordByPhoneAndCoach(phone, state);
+        }else{
+            listAll = this.chooseClassService.findChooseClassRecordByPhone(phone, state);
+        }
 
         return listAll;
     }
@@ -595,6 +601,7 @@ public class MiniAppController extends BaseController {
             studentEntity.setRegistrTime(format);
             studentEntity.setMoney("0");
             studentEntity.setChargeType(2);
+            studentEntity.setUnitPrice("150");
             studentEntity.setAdult("2");//1 成人 2小孩
             this.studentService.insertStudentEntity(studentEntity);
             this.signUpEntityService.insertSignUpEntity(signUpEntity);

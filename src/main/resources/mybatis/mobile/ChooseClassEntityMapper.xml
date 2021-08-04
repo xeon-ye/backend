@@ -96,4 +96,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by a.id desc
     </select>
 
+    <select id="findChooseClassRecordByPhoneAndCoach" resultMap="ChooseClassEntityResult">
+        select a.*,b.name studentName,c.name coachName,d.name courseName,e.name placeName from tt_choose_class a left join tt_student b on a.student_id=b.id
+                                                                                                                 left join tt_coach c on a.coach_id=c.id
+                                                                                                                 left join tt_course d on a.course_id=d.id
+                                                                                                                 left join tt_place e on a.place_id=e.id
+        where c.tel=#{tel} and a.week=#{state}
+        order by a.id desc
+    </select>
+
 </mapper>

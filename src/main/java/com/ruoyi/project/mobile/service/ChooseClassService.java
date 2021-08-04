@@ -63,4 +63,7 @@ public interface ChooseClassService
      * 查询个人课程表(根据手机号)
      */
     public List<ChooseClassEntity> findChooseClassRecordByPhone(String tel,String state);
+
+    //查询教练课程列表
+    public List<ChooseClassEntity> findChooseClassRecordByPhoneAndCoach(String tel,String state);
 }

@@ -60,6 +60,11 @@ public class Constants
     public static final String CAPTCHA_CODE_KEY = "captcha_codes:";
 
     /**
+     * 短信验证码 redis key
+     */
+    public static final String SMS_CAPTCHA_CODE_KEY = "sms_captcha_codes:";
+
+    /**
      * 登录用户 redis key
      */
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";

@@ -95,4 +95,9 @@ public class ChooseClassServiceImpl implements ChooseClassService
     public List<ChooseClassEntity> findChooseClassRecordByPhone(String tel,String state) {
         return chooseClassEntityMapper.findChooseClassRecordByPhone(tel,state);
     }
+
+    @Override
+    public List<ChooseClassEntity> findChooseClassRecordByPhoneAndCoach(String tel,String state){
+        return chooseClassEntityMapper.findChooseClassRecordByPhoneAndCoach(tel,state);
+    }
 }
